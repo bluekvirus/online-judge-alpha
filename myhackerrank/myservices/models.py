@@ -49,10 +49,9 @@ class Interview(models.Model):
 #each submission has a foreign key to the candidate it belongs to as well as the interview?? Many submissions for one interview and one candidate
 
 class Submission(models.Model):
-	user_id = models.ForeignKey(Candidate, on_delete=models.CASCADE)
 	submit_id = models.IntegerField()
 	result = models.CharField(max_length=20)
-	problem_id = models.ForeignKey(Problem, on_delete=models.CASCADE) 
+	problem = models.ForeignKey(Problem, on_delete=models.CASCADE) 
 	interview = models.ForeignKey(Interview, on_delete=models.CASCADE) 
 
 
