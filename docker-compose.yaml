@@ -1,0 +1,35 @@
+version: '2'
+services:
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    environment:
+      - ZOO_ENABLE_AUTH=yes
+      - ZOO_SERVER_USERS=kafka
+      - ZOO_SERVER_PASSWORDS=kafka_password
+
+
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=SASL_PLAINTEXT://0.0.0.0:9092, PLAINTEXT://127.0.0.1:29092
+      - KAFKA_ADVERTISED_LISTENERS=SASL_PLAINTEXT://kafka:9092, PLAINTEXT://127.0.0.1:29092
+      - KAFKA_ZOOKEEPER_USER=kafka
+      - KAFKA_ZOOKEEPER_PASSWORD=kafka_password
+      - ALLOW_PLAINTEXT_LISTENER=yes
+
+  srvhackerrank:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./hrank.txt:/app/hrank.txt
+    depends_on:
+      - kafka
+      - zookeeper
