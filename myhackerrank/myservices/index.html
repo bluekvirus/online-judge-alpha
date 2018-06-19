@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<head>
+	<title> Online Judge Prototype </title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div id="front-end-container" style="position:absolute; top: 0; bottom: 0; right: 0; left: 0;"></div>
+	<script>
+		$(document).ready(function(){
+			fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/problems')
+				.then((res) => {
+			        return res.text();
+				})
+				.then((data) => {
+				    var container = $('#front-end-container');
+				    container.html(data);
+				    startbtn = $('#start-btn');
+				    if(startbtn.length > 0){
+				    	startbtn.click(startInterview);
+				    }else{
+				    	//already started
+			    		$('.submit-btn').click(submitProblem);
+				    	preloadResults();
+				    }
+					
+				});
+
+		});
+		
+		
+		function startInterview(){
+ 			fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/start')
+ 				.then((res) =>{
+	 				return res;
+ 				})
+ 				.then((data) => {
+ 					return fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/problems');
+ 				})
+				.then((res) => {
+					return res.text();
+				})
+				.then((data) => {
+					$('#front-end-container').html(data);
+					$('.submit-btn').click(submitProblem);
+					preloadResults();
+				})
+				.catch((error) =>{
+					console.log(error);
+				});	
+		}
+
+		function preloadResults(){
+			$('.result-pane').each(function(i, obj){
+				var obj = $(this);
+				var url = 'http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/results?pid=';
+				url += obj.attr('data-problem-id');
+				fetch(url).then((res) => {
+					return res.json();
+				}).then((data) => {
+					//now convert the data into list elements and display
+					$list = $('<ul class="reslist" style="list-style-type: none; padding: 0.5em;">');
+					$(data).each(function(index, item){
+						addToList($list, item.fields, true);
+					});
+					obj.append($list);
+				});
+
+			});
+		}
+
+		function addToList($list, item, flag){
+			var $li = $('<li style="text-align:center;">');
+			var $time = $('<span style = "padding-right: 2em; color: gray;">');
+			$time.text(item['submit_at']);
+			var $result = $('<span style="color: gray">');
+			$result.text(item['result']);
+			$li.append($time);
+			$li.append($result);
+			if (flag){
+				$list.append($li);
+			}
+			else{
+				$list.prepend($li);
+			}
+			return $li
+		}
+
+		function submitProblem(event){
+			var mydata = {}
+			mydata['code'] = "#!/bin/python3\n\nimport math\nimport os\nimport random\nimport re\nimport sys\n\n# Complete the pairs function below.\ndef pairs(k, arr):\n    total = 0\n    counts = set()\n    for i in arr:\n        if i + k in counts:\n            total += 1\n        if i - k in counts:\n            total += 1\n        counts.add(i)\n    return total\n                 \n            \n\nif __name__ == '__main__':\n    fptr = open(os.environ['OUTPUT_PATH'], 'w')\n\n    nk = input().split()\n\n    n = int(nk[0])\n\n    k = int(nk[1])\n\n    arr = list(map(int, input().rstrip().split()))\n\n    result = pairs(k, arr)\n\n    fptr.write(str(result) + '\\n')\n\n    fptr.close()\n"
+			mydata['language'] = "python3";
+			mydata['pid'] = event.target.getAttribute("data-problem-id");
+			console.log(mydata['pid'])
+			var $textpane = $('.text-pane[data-problem-id=' + mydata['pid'] + ']');
+			var code = $textpane.find('textarea.text').val();
+			//mydata['code'] = code;		
+			fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/submit', {
+				method: 'post',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(mydata)
+			}).then((res) => {
+				return res.json();
+			}).then((data) => {
+				var flag = data.hasOwnProperty('Error');
+				if(!flag){
+					var $resultpane = $('.result-pane[data-problem-id=' + mydata['pid'] + ']');
+					var $list = $resultpane.find('ul.reslist');
+					var $li = addToList($list, data , false);
+					if(data['result'] == "Queued" || data['result'] == "Processing"){
+						//need to start polling until get result
+						setTimeout(startPoll,2000, $li, mydata['pid'], data['submit_id']);
+					}
+				}	
+			
+			});
+		}
+
+		function startPoll($li, pid, sid){
+			var url = 'http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/poll?pid=';
+			url += pid;
+			url += "&sid=";
+			url += sid;
+			fetch(url).then((res) => {
+				return res.json();
+			}).then((data) => {
+				if(data[0].fields['result'] == "Queued" || data[0].fields['result'] == "Processing"){
+					setTimeout(startPoll,2000, $li, pid, sid);
+				}else{
+					$result = $li.find('span:last');
+					$result.text(data[0].fields['result']);
+				}
+			});
+		}
+	</script>
+</body>
+</html>

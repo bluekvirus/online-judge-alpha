@@ -1,0 +1,38 @@
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+{% block content %}
+<div style="height:100%; width: 100%;">
+	<ul class="nav nav-tabs">
+		{% for problem in interview_problems %}
+			{% if forloop.first %}
+				<li role="presentation" class="active"><a href="#{{problem.problem_name}}" role="tab" data-toggle="tab">{{problem.problem_name}}</a></li>	
+			{% else %}
+				<li role="presentation"><a href="#{{problem.problem_name}}" role="tab" data-toggle="tab">{{problem.problem_name}}</a></li>	
+			{% endif %}
+		{% endfor %}
+	</ul>
+
+	<!-- Tab Panes -->
+	<div id="content" class="tab-content">
+		{% for problem in interview_problems %}
+			{% if forloop.first %}
+				<div id="{{problem.problem_name}}" class="tab-pane active">
+			{% else %}
+				<div id="{{problem.problem_name}}" class="tab-pane">
+			{% endif %}
+			{% include "myservices/individual.html" with problem=problem only %}
+			</div><!--ending the div-->
+		{% endfor %}
+	</div><!--ending content tab-->
+
+{% endblock content %}
+
+
+
+
+
+
+
+
+

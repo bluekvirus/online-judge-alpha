@@ -11,5 +11,5 @@ class CandidateAdmin(admin.ModelAdmin):
 
 admin.site.register(Interview, InterviewAdmin)
 admin.site.register(Candidate, CandidateAdmin)
-#admin.site.register(Submission)
+admin.site.register(Submission)
 admin.site.register(Problem)

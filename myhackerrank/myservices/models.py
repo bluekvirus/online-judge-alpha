@@ -24,6 +24,11 @@ class Problem(models.Model):
 	def __str__(self):
 		return '{} : {} : {}'.format(self.difficulty, self.problem_name, self.id)
 
+	def display_file(self):
+		with open(self.problem_path) as f:
+			return f.read()
+
+
 #pass it length 64 for a 512 bits hash string
 def random_string(length):
     pool = string.ascii_letters + string.digits
@@ -34,7 +39,7 @@ def random_string(length):
 class Interview(models.Model):
 	started_at = models.DateTimeField(null=True, default=None)
 	status = models.CharField(max_length=20)
-	hash_str = models.CharField(max_length=64) #access the problems using .problem_set.all()
+	hash_str = models.CharField(max_length=64, db_index=True) #access the problems using .problem_set.all()
 	#access the submission ids using .hackerrank_set.all()
 	candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
 	problems = models.ManyToManyField(Problem)
@@ -49,12 +54,15 @@ class Interview(models.Model):
 #each submission has a foreign key to the candidate it belongs to as well as the interview?? Many submissions for one interview and one candidate
 
 class Submission(models.Model):
-	submit_id = models.IntegerField()
-	result = models.CharField(max_length=20)
+	submit_id = models.IntegerField(null=True, default=None)
+	result = models.CharField(max_length=20, null=True, default=None)
 	problem = models.ForeignKey(Problem, on_delete=models.CASCADE) 
-	interview = models.ForeignKey(Interview, on_delete=models.CASCADE) 
+	interview = models.ForeignKey(Interview, on_delete=models.CASCADE)
+	submit_at = models.DateTimeField()
 
-
-
+	def save(self):
+		if not self.id:
+			self.submit_at = timezone.now()
+		super(Submission, self).save()
 
 
