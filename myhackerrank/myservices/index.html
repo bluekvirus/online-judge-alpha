@@ -4,6 +4,12 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="lib/codemirror.js"></script>
+	<link rel="stylesheet" href="lib/codemirror.css">
+	<link rel="stylesheet" href="lib/theme/abcdef.css">
+	<script src="lib/javascript/javascript.js"></script>
+	<script src="lib/mode/python/python.js"></script>
+	<script src="lib/mode/javascript/javascript.js"></script>
 </head>
 <body>
 	<div id="front-end-container" style="position:absolute; top: 0; bottom: 0; right: 0; left: 0;"></div>
@@ -22,12 +28,19 @@
 				    }else{
 				    	//already started
 			    		$('.submit-btn').click(submitProblem);
+			    		$('.text').each(function(index, obj){
+		    				var myCodeMirror = CodeMirror.fromTextArea(obj, {mode: {name:"python", version: 3} ,lineNumbers: true,  matchBrackets: true, styleActiveLine: true , theme: "abcdef", indentWithTabs: true});
+		    				myCodeMirror.setSize(null, '100%');
+		    				console.log("done making code mirror")
+			    		});
+			    		console.log("about to preload the results")
 				    	preloadResults();
 				    }
 					
 				});
 
 		});
+
 		
 		
 		function startInterview(){
@@ -89,13 +102,18 @@
 
 		function submitProblem(event){
 			var mydata = {}
-			mydata['code'] = "#!/bin/python3\n\nimport math\nimport os\nimport random\nimport re\nimport sys\n\n# Complete the pairs function below.\ndef pairs(k, arr):\n    total = 0\n    counts = set()\n    for i in arr:\n        if i + k in counts:\n            total += 1\n        if i - k in counts:\n            total += 1\n        counts.add(i)\n    return total\n                 \n            \n\nif __name__ == '__main__':\n    fptr = open(os.environ['OUTPUT_PATH'], 'w')\n\n    nk = input().split()\n\n    n = int(nk[0])\n\n    k = int(nk[1])\n\n    arr = list(map(int, input().rstrip().split()))\n\n    result = pairs(k, arr)\n\n    fptr.write(str(result) + '\\n')\n\n    fptr.close()\n"
+			//mydata['code'] = "#!/bin/python3\n\nimport math\nimport os\nimport random\nimport re\nimport sys\n\n# Complete the pairs function below.\ndef pairs(k, arr):\n    total = 0\n    counts = set()\n    for i in arr:\n        if i + k in counts:\n            total += 1\n        if i - k in counts:\n            total += 1\n        counts.add(i)\n    return total\n                 \n            \n\nif __name__ == '__main__':\n    fptr = open(os.environ['OUTPUT_PATH'], 'w')\n\n    nk = input().split()\n\n    n = int(nk[0])\n\n    k = int(nk[1])\n\n    arr = list(map(int, input().rstrip().split()))\n\n    result = pairs(k, arr)\n\n    fptr.write(str(result) + '\\n')\n\n    fptr.close()\n"
 			mydata['language'] = "python3";
 			mydata['pid'] = event.target.getAttribute("data-problem-id");
 			console.log(mydata['pid'])
 			var $textpane = $('.text-pane[data-problem-id=' + mydata['pid'] + ']');
-			var code = $textpane.find('textarea.text').val();
-			//mydata['code'] = code;		
+			//var code = $textpane.find('textarea.text').val();
+			console.log($textpane);
+			editor = $textpane.find('.CodeMirror')[0].CodeMirror;
+			//editor = $text.data('data-editor');
+			console.log(editor);
+			mydata['code'] = editor.getValue();
+			console.log(mydata['code']);	
 			fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/submit', {
 				method: 'post',
 				headers: {
