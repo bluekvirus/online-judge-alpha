@@ -37,8 +37,14 @@ def random_string(length):
 
 #does this need a foreign key to candidate with the one-to-one field
 class Interview(models.Model):
+	INTERVIEW_STATUS_CHOICES = (
+		('Draft', 'Draft'),
+		('Online', 'Online'),
+		('Started', 'Started'),
+		('Completed', 'Completed'),
+		)
 	started_at = models.DateTimeField(null=True, default=None)
-	status = models.CharField(max_length=20)
+	status = models.CharField(max_length=20, choices=INTERVIEW_STATUS_CHOICES)
 	hash_str = models.CharField(max_length=64, db_index=True) #access the problems using .problem_set.all()
 	#access the submission ids using .hackerrank_set.all()
 	candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
