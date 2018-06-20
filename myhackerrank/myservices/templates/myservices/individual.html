@@ -9,6 +9,10 @@
 		<div class="result-pane" data-problem-id={{problem.id}} style="border: 1px blue solid; height: 20%; overflow-y: auto; margin-bottom: 0.5em">
 			<div style="text-align: center;"><span style="padding-right: 4em;">Time Submitted</span><span>Result</span></div>
 		</div>
+		<select style="width: 20%;" class="form-control" id="sel{{problem.id}}">
+			<option value="python" selected="selected">Python</option>
+			<option value="javascript" >Javascript</option>
+		</select>	   
 		<div class="text-pane" data-problem-id={{problem.id}} style=" height: 70%;">
 			<textarea class="text" style="width: 100%; height: 100%;"></textarea> <!--will need to grab code from here for submission-->
 		</div>

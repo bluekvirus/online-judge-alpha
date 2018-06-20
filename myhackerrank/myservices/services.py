@@ -49,8 +49,9 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 			b.submit_id = submit_id
 			b.result = status
 			b.save()
+			# format(b.submit_at, 'd M, Y g:i'
 			#could be processing or queued
-			return res.json({'submit_id': submit_id, 'result': status, 'submit_at': format(b.submit_at, 'd M, Y g:i')})
+			return res.json({'submit_id': submit_id, 'result': status, 'submit_at': b.submit_at})
 		return res.json({"Error": "Cannot submit"})
 	return res.json({"Error": "Invalid Submission, Problem, or Interview"})
 

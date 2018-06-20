@@ -31,18 +31,30 @@
 			    		$('.text').each(function(index, obj){
 		    				var myCodeMirror = CodeMirror.fromTextArea(obj, {mode: {name:"python", version: 3} ,lineNumbers: true,  matchBrackets: true, styleActiveLine: true , theme: "abcdef", indentWithTabs: true});
 		    				myCodeMirror.setSize(null, '100%');
+		    				$codemirror = $(this).next('.CodeMirror')
+		    				$codemirror.find('.CodeMirror-gutter').css('width', '29px')
+		    				//$gutter.css('width', '29px');
+		    				$codemirror.find('.CodeMirror-gutter-wrapper').css('left', '-31px');
+		    				$sizer = $codemirror.find('.CodeMirror-sizer')
+		    				$sizer.css('min-width', '7px')
+		    				$sizer.css('margin-left', '31px')
+		    				$line = $codemirror.find('.CodeMirror-linenumber').css('width', '21px');
 		    				console.log("done making code mirror")
 			    		});
-			    		console.log("about to preload the results")
+
+		    			//$('[id^="sel_"]').change(function(){
+		    			 $('[id^="sel"]').change(function(){
+	    					editor = $(this).next('.text-pane').find('.CodeMirror')[0].CodeMirror;
+			    			editor.setOption("mode", $(this).val());
+			    		});
 				    	preloadResults();
+
 				    }
 					
 				});
 
 		});
 
-		
-		
 		function startInterview(){
  			fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/start')
  				.then((res) =>{
@@ -86,7 +98,12 @@
 		function addToList($list, item, flag){
 			var $li = $('<li style="text-align:center;">');
 			var $time = $('<span style = "padding-right: 2em; color: gray;">');
-			$time.text(item['submit_at']);
+			var d = new Date(item['submit_at'])
+			console.log(item['submit_at'])
+			var offset = d.getTimezoneOffset();
+			var hours = offset/60;
+			d.setHours(d.getUTCHours() - hours);
+			$time.text(d);
 			var $result = $('<span style="color: gray">');
 			$result.text(item['result']);
 			$li.append($time);
@@ -102,18 +119,16 @@
 
 		function submitProblem(event){
 			var mydata = {}
-			//mydata['code'] = "#!/bin/python3\n\nimport math\nimport os\nimport random\nimport re\nimport sys\n\n# Complete the pairs function below.\ndef pairs(k, arr):\n    total = 0\n    counts = set()\n    for i in arr:\n        if i + k in counts:\n            total += 1\n        if i - k in counts:\n            total += 1\n        counts.add(i)\n    return total\n                 \n            \n\nif __name__ == '__main__':\n    fptr = open(os.environ['OUTPUT_PATH'], 'w')\n\n    nk = input().split()\n\n    n = int(nk[0])\n\n    k = int(nk[1])\n\n    arr = list(map(int, input().rstrip().split()))\n\n    result = pairs(k, arr)\n\n    fptr.write(str(result) + '\\n')\n\n    fptr.close()\n"
-			mydata['language'] = "python3";
 			mydata['pid'] = event.target.getAttribute("data-problem-id");
-			console.log(mydata['pid'])
 			var $textpane = $('.text-pane[data-problem-id=' + mydata['pid'] + ']');
-			//var code = $textpane.find('textarea.text').val();
-			console.log($textpane);
 			editor = $textpane.find('.CodeMirror')[0].CodeMirror;
-			//editor = $text.data('data-editor');
-			console.log(editor);
 			mydata['code'] = editor.getValue();
-			console.log(mydata['code']);	
+			mode = editor.getMode().name;
+			if(mode === "python"){
+				mydata['language'] = "python3";
+			}else{
+				mydata['language'] = "javascript";
+			}
 			fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/submit', {
 				method: 'post',
 				headers: {
