@@ -16,7 +16,7 @@
 	<div id="front-end-container" style="position:absolute; top: 0; bottom: 0; right: 0; left: 0;"></div>
 	<script>
 		$(document).ready(function(){
-			fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/problems')
+			fetch('http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/problems')
 				.then((res) => {
 			        return res.text();
 				})
@@ -57,12 +57,12 @@
 		});
 
 		function startInterview(){
- 			fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/start')
+ 			fetch('http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/start')
  				.then((res) =>{
 	 				return res;
  				})
  				.then((data) => {
- 					return fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/problems');
+ 					return fetch('http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/problems');
  				})
 				.then((res) => {
 					return res.text();
@@ -80,17 +80,19 @@
 		function preloadResults(){
 			$('.result-pane').each(function(i, obj){
 				var obj = $(this);
-				var url = 'http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/results?pid=';
+				var url = 'http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/results?pid=';
 				url += obj.attr('data-problem-id');
 				fetch(url).then((res) => {
 					return res.json();
 				}).then((data) => {
 					//now convert the data into list elements and display
-					$list = $('<ul class="reslist" style="list-style-type: none; padding: 0.5em;">');
+					$list = $('<ul class="reslist" style="list-style-type: none;">');
 					$(data).each(function(index, item){
 						addToList($list, item.fields, true);
 					});
-					obj.append($list);
+					$div = $('<div style="float:left; width: 90%; text-align:center;">');
+					$div.append($list);
+					obj.append($div);
 				});
 
 			});
@@ -100,11 +102,11 @@
 			var $li = $('<li style="text-align:center;">');
 			var $time = $('<span style = "padding-right: 2em; color: gray;">');
 			var d = new Date(item['submit_at'])
-			console.log(item['submit_at'])
 			var offset = d.getTimezoneOffset();
 			var hours = offset/60;
 			d.setHours(d.getUTCHours() - hours);
-			$time.text(d);
+			var newD = d.toString().split(' ').slice(0,5).join(' ');
+			$time.text(newD);
 			var $result = $('<span style="color: gray">');
 			$result.text(item['result']);
 			$li.append($time);
@@ -116,6 +118,32 @@
 				$list.prepend($li);
 			}
 			return $li
+		}
+
+		function createModal(){
+
+			var myvar = '<div class="modal" id="time-modal" tabindex="-1" role="dialog">'+
+			'  <div class="modal-dialog" role="document">'+
+			'    <div class="modal-content">'+
+			'      <div class="modal-header">'+
+			'        <h5 class="modal-title">Submission Error!</h5>'+
+			'        <button type="button" class="close" data-dismiss="modal" aria-label="Close">'+
+			'          <span aria-hidden="true">×</span>'+
+			'        </button>'+
+			'      </div>'+
+			'      <div class="modal-body">'+
+			'        <p>Sorry, it seems that your interview session has ended. If you believe this is incorrect please contact the recruiter.</p>'+
+			'      </div>'+
+			'      <div class="modal-footer">'+
+			'        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+			'      </div>'+
+			'    </div>'+
+			'  </div>'+
+			'</div>';
+			$('body').append(myvar);
+			$('#time-modal').modal();
+			$('#time-modal').modal('show');
+
 		}
 
 		function submitProblem(event){
@@ -130,7 +158,7 @@
 			}else{
 				mydata['language'] = "javascript";
 			}
-			fetch('http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/submit', {
+			fetch('http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/submit',{
 				method: 'post',
 				headers: {
 					'Accept': 'application/json',
@@ -140,8 +168,12 @@
 			}).then((res) => {
 				return res.json();
 			}).then((data) => {
-				var flag = data.hasOwnProperty('Error');
-				if(!flag){
+				console.log(data)
+				if(data.hasOwnProperty('Timeup')){
+					//make a modal pop up interview has ended
+					createModal();
+				}
+				else if(!data.hasOwnProperty('Error')){
 					var $resultpane = $('.result-pane[data-problem-id=' + mydata['pid'] + ']');
 					var $list = $resultpane.find('ul.reslist');
 					var $li = addToList($list, data , false);
@@ -155,7 +187,7 @@
 		}
 
 		function startPoll($li, pid, sid){
-			var url = 'http://localhost:8000/judge/interview/0pOU3tKczExsAdCKl5pzwgNH6QTDXYGM3zvdYaW0hSx2oopvXB4ZFMnGzD9wgKXY/poll?pid=';
+			var url = 'http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/poll?pid=';
 			url += pid;
 			url += "&sid=";
 			url += sid;

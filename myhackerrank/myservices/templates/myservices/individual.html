@@ -6,8 +6,8 @@
 	</div>
 	<!-- now we need to create the right column with text editor, submit button, and results pane -->
 	<div class="right-pane" style="float:right; width: 50%; height: 100%; padding-left: 0.5em; padding-bottom: 0.5em">
-		<div class="result-pane jumbotron" data-problem-id={{problem.id}} style="height: 20%; overflow-y: auto; margin-bottom: 0.5em">
-			<div style="text-align: center;"><span style="padding-right: 4em;">Time Submitted</span><span>Result</span></div>
+		<div class="result-pane jumbotron" data-problem-id={{problem.id}} style="height: 20%; overflow-y: auto; margin-bottom: 0.5em; padding:1em 1em;">
+			<div style="text-align: left; float: left"><span>Result</span></div>
 		</div>
 		<select style="width: 20%;" class="form-control" id="sel{{problem.id}}">
 			<option value="python" selected="selected">Python</option>

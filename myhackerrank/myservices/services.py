@@ -29,8 +29,14 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 	language = req.json['language']
 	pid = req.json['pid'] #does this become problem id then??
 	j = {'code': code, 'language':language, 'contest_slug': 'master'}
-	query = Interview.objects.filter(hash_str=hashstr)
+	query = Interview.objects.filter(hash_str=hashstr).filter(status="Started")
+	print(query)
 	if query:
+		#check how much time has elapsed. for now leave it at 3 hours for max
+		currtime = timezone.now()
+		if((timezone.now() - query[0].started_at).total_seconds() > 3600): #10800
+			query[0].status = "Completed" #should this be here?
+			return res.json({"Timeup": "Interview has ended" })
 		#blockSubmit = Submission.objects.filter(interview__hash_str = hashstr).filter(problem__id=pid).filter(result)
 		blockSubmit = Submission.objects.filter(Q(interview__hash_str = hashstr), Q(problem__id = pid), Q(result="Processing") |
 			Q(result="Queued") | Q(result = None))
@@ -52,8 +58,7 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 			# format(b.submit_at, 'd M, Y g:i'
 			#could be processing or queued
 			return res.json({'submit_id': submit_id, 'result': status, 'submit_at': b.submit_at})
-		return res.json({"Error": "Cannot submit"})
-	return res.json({"Error": "Invalid Submission, Problem, or Interview"})
+	return res.json({"Error": query})
 
 @url('interview/([a-zA-Z0-9]*)/results')
 @methods('GET')
