@@ -30,7 +30,6 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 	pid = req.json['pid'] #does this become problem id then??
 	j = {'code': code, 'language':language, 'contest_slug': 'master'}
 	query = Interview.objects.filter(hash_str=hashstr).filter(status="Started")
-	print(query)
 	if query:
 		#check how much time has elapsed. for now leave it at 3 hours for max
 		currtime = timezone.now()
@@ -58,7 +57,7 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 			# format(b.submit_at, 'd M, Y g:i'
 			#could be processing or queued
 			return res.json({'submit_id': submit_id, 'result': status, 'submit_at': b.submit_at})
-	return res.json({"Error": query})
+	return res.json({"Error": "Cannot Submit"})
 
 @url('interview/([a-zA-Z0-9]*)/results')
 @methods('GET')
