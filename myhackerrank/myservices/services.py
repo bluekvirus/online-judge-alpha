@@ -99,7 +99,8 @@ def interview(req, res, hashstr, *args, **kwargs):
 	query = Interview.objects.filter(hash_str=hashstr)
 	if not query: #or query.exist()
 		#return res.json({"Error": "404 interview does not exist"}) 
-		res.html('<h1> 404 Interview: {} not found'.format(hashstr))
+		template = loader.get_template('myservices/404.html')
+		res.html(template.render())
 		res.status(404)
 	else:
 		#is valid so we should return a page with start button or problems if already started
