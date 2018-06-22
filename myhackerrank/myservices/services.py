@@ -136,6 +136,16 @@ def startInterview(req, res, hashstr, *args, **kwargs):
 	query.save()
 	return res.json({"Successful Start": "Interview is now started"})
 
+@url('interview/([a-zA-Z0-9]*)/time')
+@methods('GET')
+@service
+def getTime(req, res, hashstr, *args, **kwargs):
+	query = Interview.objects.filter(hash_str=hashstr)
+	if(query):
+		return res.json({"Time":query[0].started_at})
+	return res.json({"Time": 0})
+
+
 
 
 

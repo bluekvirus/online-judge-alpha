@@ -16,7 +16,7 @@
 	<div id="front-end-container" style="position:absolute; top: 0; bottom: 0; right: 0; left: 0;"></div>
 	<script>
 		$(document).ready(function(){
-			fetch('http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/problems')
+			fetch('http://localhost:8000/judge/interview/nTT6hEPzgG1m7I4G5Mt9wcxPy22n1FLQmUbt8qfkW8pb2EJVTwvdG6e7RY8PcZNl/problems')
 				.then((res) => {
 			        return res.text();
 				})
@@ -29,40 +29,91 @@
 				    }else{
 				    	//already started
 			    		$('.submit-btn').click(submitProblem);
+			    		//set up the cosmetic front end timer
+			    		startTimer();
 			    		$('.text').each(function(index, obj){
 		    				var myCodeMirror = CodeMirror.fromTextArea(obj, {mode: {name:"python", version: 3} ,lineNumbers: true,  matchBrackets: true, styleActiveLine: true , theme: "abcdef", indentWithTabs: true});
 		    				myCodeMirror.setSize(null, '100%');
-		    				$codemirror = $(this).next('.CodeMirror')
-		    				$codemirror.find('.CodeMirror-gutter').css('width', '29px')
-		    				//$gutter.css('width', '29px');
+		    				$codemirror = $(this).next('.CodeMirror');
+		    				$codemirror.find('.CodeMirror-gutter').css('width', '29px');
 		    				$codemirror.find('.CodeMirror-gutter-wrapper').css('left', '-31px');
-		    				$sizer = $codemirror.find('.CodeMirror-sizer')
-		    				$sizer.css('min-width', '7px')
-		    				$sizer.css('margin-left', '31px')
+		    				$sizer = $codemirror.find('.CodeMirror-sizer');
+		    				$sizer.css('min-width', '7px');
+		    				$sizer.css('margin-left', '31px');
 		    				$line = $codemirror.find('.CodeMirror-linenumber').css('width', '21px');
-		    				console.log("done making code mirror")
 			    		});
 
-		    			//$('[id^="sel_"]').change(function(){
 		    			 $('[id^="sel"]').change(function(){
 	    					editor = $(this).next('.text-pane').find('.CodeMirror')[0].CodeMirror;
 			    			editor.setOption("mode", $(this).val());
 			    		});
 				    	preloadResults();
-
 				    }
 					
 				});
 
 		});
 
+		function startTimer(){
+			fetch('http://localhost:8000/judge/interview/nTT6hEPzgG1m7I4G5Mt9wcxPy22n1FLQmUbt8qfkW8pb2EJVTwvdG6e7RY8PcZNl/time').then((res) =>{
+					return res.json();
+				}).then((data) => {
+					if (data["Time"] == 0){
+						//set time as zero, even if invalid already
+						$('#timer').html('00:00:00');
+					}
+					//else figure out the correct time to display
+					var startTime = new Date(data["Time"]);
+					var currentTime = new Date();
+				// console.log(currentTime);
+				// var hours = currentTime.getHours() - startTime.getHours();
+				// console.log("hours is: " + hours);
+				// var minutes = currentTime.getMinutes() - startTime.getMinutes();
+				// console.log("minutes is: " + minutes);
+				// var seconds = currentTime.getSeconds() - startTime.getSeconds();
+				// console.log("seconds is: " + seconds);
+					var msdiff = Math.abs(currentTime - startTime);
+					//we want to display 3 hours subtracting this msdiff to know how much time is left in the 3 hours
+					var timeLeft = 3600000 - msdiff;
+					var time = parseMillisecondsIntoReadableTime(timeLeft);
+					$('#timer').html(time);
+					setInterval(decrementTimer, 1000, timeLeft); //every 1 second
+				})
+		}
+
+		function decrementTimer(timeLeft){
+			var newtime = timeLeft - 1000;
+			var time = parseMillisecondsIntoReadableTime(newtime);
+			$('#timer').html(time);
+			setInterval(decrementTimer, 1000, newtime);
+		}
+
+		function parseMillisecondsIntoReadableTime(milliseconds){
+		  //Get hours from milliseconds
+		  var hours = milliseconds / (1000*60*60);
+		  var absoluteHours = Math.floor(hours);
+		  var h = absoluteHours > 9 ? absoluteHours : '0' + absoluteHours;
+
+		  //Get remainder from hours and convert to minutes
+		  var minutes = (hours - absoluteHours) * 60;
+		  var absoluteMinutes = Math.floor(minutes);
+		  var m = absoluteMinutes > 9 ? absoluteMinutes : '0' +  absoluteMinutes;
+
+		  //Get remainder from minutes and convert to seconds
+		  var seconds = (minutes - absoluteMinutes) * 60;
+		  var absoluteSeconds = Math.floor(seconds);
+		  var s = absoluteSeconds > 9 ? absoluteSeconds : '0' + absoluteSeconds;
+
+		  return h + ':' + m + ':' + s;
+		}
+
 		function startInterview(){
- 			fetch('http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/start')
+ 			fetch('http://localhost:8000/judge/interview/nTT6hEPzgG1m7I4G5Mt9wcxPy22n1FLQmUbt8qfkW8pb2EJVTwvdG6e7RY8PcZNl/start')
  				.then((res) =>{
 	 				return res;
  				})
  				.then((data) => {
- 					return fetch('http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/problems');
+ 					return fetch('http://localhost:8000/judge/interview/nTT6hEPzgG1m7I4G5Mt9wcxPy22n1FLQmUbt8qfkW8pb2EJVTwvdG6e7RY8PcZNl/problems');
  				})
 				.then((res) => {
 					return res.text();
@@ -80,7 +131,7 @@
 		function preloadResults(){
 			$('.result-pane').each(function(i, obj){
 				var obj = $(this);
-				var url = 'http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/results?pid=';
+				var url = 'http://localhost:8000/judge/interview/nTT6hEPzgG1m7I4G5Mt9wcxPy22n1FLQmUbt8qfkW8pb2EJVTwvdG6e7RY8PcZNl/results?pid=';
 				url += obj.attr('data-problem-id');
 				fetch(url).then((res) => {
 					return res.json();
@@ -158,7 +209,7 @@
 			}else{
 				mydata['language'] = "javascript";
 			}
-			fetch('http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/submit',{
+			fetch('http://localhost:8000/judge/interview/nTT6hEPzgG1m7I4G5Mt9wcxPy22n1FLQmUbt8qfkW8pb2EJVTwvdG6e7RY8PcZNl/submit',{
 				method: 'post',
 				headers: {
 					'Accept': 'application/json',
@@ -187,7 +238,7 @@
 		}
 
 		function startPoll($li, pid, sid){
-			var url = 'http://localhost:8000/judge/interview/R0NWx8MrZji5gMZ5qUWtjXYXmU8DkuoU0wR0gLxTqod1WTO8sEq56EqzRXRiT0Pz/poll?pid=';
+			var url = 'http://localhost:8000/judge/interview/nTT6hEPzgG1m7I4G5Mt9wcxPy22n1FLQmUbt8qfkW8pb2EJVTwvdG6e7RY8PcZNl/poll?pid=';
 			url += pid;
 			url += "&sid=";
 			url += sid;
