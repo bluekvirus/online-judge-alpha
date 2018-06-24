@@ -16,7 +16,7 @@
 	<div id="front-end-container" style="position:absolute; top: 0; bottom: 0; right: 0; left: 0;"></div>
 	<script>
 		$(document).ready(function(){
-			fetch('http://localhost:8000/judge/interview/YLy4InkmoQchqGIuUUfOpb9xzzJVL2PUskLmMly5UDKPtIpAAiE0edNKUcLMfSQG/problems')
+			fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/problems')
 				.then((res) => {
 			        return res.text();
 				})
@@ -63,7 +63,7 @@
 		}
 
 		function startTimer(){
-			fetch('http://localhost:8000/judge/interview/YLy4InkmoQchqGIuUUfOpb9xzzJVL2PUskLmMly5UDKPtIpAAiE0edNKUcLMfSQG/time').then((res) =>{
+			fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/time').then((res) =>{
 					return res.json();
 					}).then((data) => {
 						if (data["Time"] == 0){
@@ -108,12 +108,12 @@
 		}
 
 		function startInterview(){
- 			fetch('http://localhost:8000/judge/interview/YLy4InkmoQchqGIuUUfOpb9xzzJVL2PUskLmMly5UDKPtIpAAiE0edNKUcLMfSQG/start')
+ 			fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/start')
  				.then((res) =>{
 	 				return res;
  				})
  				.then((data) => {
- 					return fetch('http://localhost:8000/judge/interview/YLy4InkmoQchqGIuUUfOpb9xzzJVL2PUskLmMly5UDKPtIpAAiE0edNKUcLMfSQG/problems');
+ 					return fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/problems');
  				})
 				.then((res) => {
 					return res.text();
@@ -133,7 +133,7 @@
 		function preloadResults(){
 			$('.result-pane').each(function(i, obj){
 				var obj = $(this);
-				var url = 'http://localhost:8000/judge/interview/YLy4InkmoQchqGIuUUfOpb9xzzJVL2PUskLmMly5UDKPtIpAAiE0edNKUcLMfSQG/results?pid=';
+				var url = 'http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/results?pid=';
 				url += obj.attr('data-problem-id');
 				fetch(url).then((res) => {
 					return res.json();
@@ -160,7 +160,21 @@
 			d.setHours(d.getUTCHours() - hours);
 			var newD = d.toString().split(' ').slice(0,5).join(' ');
 			$time.text(newD);
-			var $result = $('<span style="color: gray">');
+			var str = '<span style="color:';
+			//if queued or processing
+			if(item['result'] == "Queued" || item['result'] == "Processing"){
+				str += '#17a2b8">';
+			}
+			else if(item['result'] == "Accepted"){
+				str += '#28a745">';
+			}
+			else if(item['result'] == "Wrong Answer"){
+				str += '#dc3545">';
+			}
+			else{
+				str += '#ffc107">';
+			}
+			var $result = $(str);
 			$result.text(item['result']);
 			$li.append($time);
 			$li.append($result);
@@ -211,7 +225,7 @@
 			}else{
 				mydata['language'] = "javascript";
 			}
-			fetch('http://localhost:8000/judge/interview/YLy4InkmoQchqGIuUUfOpb9xzzJVL2PUskLmMly5UDKPtIpAAiE0edNKUcLMfSQG/submit',{
+			fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/submit',{
 				method: 'post',
 				headers: {
 					'Accept': 'application/json',
@@ -240,7 +254,7 @@
 		}
 
 		function startPoll($li, pid, sid){
-			var url = 'http://localhost:8000/judge/interview/YLy4InkmoQchqGIuUUfOpb9xzzJVL2PUskLmMly5UDKPtIpAAiE0edNKUcLMfSQG/poll?pid=';
+			var url = 'http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/poll?pid=';
 			url += pid;
 			url += "&sid=";
 			url += sid;
@@ -251,6 +265,15 @@
 					setTimeout(startPoll,2000, $li, pid, sid);
 				}else{
 					$result = $li.find('span:last');
+					if(data[0].fields['result'] == "Accepted"){
+						$result.css('color', '#28a745')
+					}
+					else if(data[0].fields['result'] == "Wrong Answer"){
+						$result.css('color', '#dc3545')
+					}
+					else{
+						$result.css('color', '#ffc107')
+					}
 					$result.text(data[0].fields['result']);
 				}
 			});
