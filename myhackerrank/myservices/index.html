@@ -139,11 +139,11 @@
 					return res.json();
 				}).then((data) => {
 					//now convert the data into list elements and display
-					$list = $('<ul class="reslist" style="list-style-type: none; text-align: left; padding-left: 8em;">');
+					$list = $('<ul class="reslist" style="list-style-type: none;">');
 					$(data).each(function(index, item){
 						addToList($list, item.fields, true);
 					});
-					$div = $('<div style="float:left; width: 90%; text-align:center;">');
+					$div = $('<div style="float:left; width: 90%; text-align:center; padding-left: 10%; padding-right: 10%">');
 					$div.append($list);
 					obj.append($div);
 				});
