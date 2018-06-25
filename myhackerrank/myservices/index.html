@@ -139,7 +139,7 @@
 					return res.json();
 				}).then((data) => {
 					//now convert the data into list elements and display
-					$list = $('<ul class="reslist" style="list-style-type: none;">');
+					$list = $('<ul class="reslist" style="list-style-type: none; text-align: left; padding-left: 8em;">');
 					$(data).each(function(index, item){
 						addToList($list, item.fields, true);
 					});
@@ -152,7 +152,7 @@
 		}
 
 		function addToList($list, item, flag){
-			var $li = $('<li style="text-align:center;">');
+			var $li = $('<li>');
 			var $time = $('<span style = "padding-right: 2em; color: gray;">');
 			var d = new Date(item['submit_at'])
 			var offset = d.getTimezoneOffset();

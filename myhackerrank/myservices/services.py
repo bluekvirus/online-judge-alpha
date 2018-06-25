@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.utils.dateformat import format
 
 
+@url('interview/getAuth')
 @service
 def getAuth(req, res, *args, **kwargs):
 	f = open('/app/hrank.txt', "r")
@@ -144,6 +145,12 @@ def getTime(req, res, hashstr, *args, **kwargs):
 	if(query):
 		return res.json({"Time":query[0].started_at})
 	return res.json({"Time": 0})
+
+@url('interview/hello')
+@methods('GET')
+@service
+def welcome(req, res, *args, **kwargs):
+	return res.html( '<div style = "text-align: center; font-size: 40px;">' + '<p style="color: 5F9EA0"> Hello World! </p>' + '</div>')
 
 
 
