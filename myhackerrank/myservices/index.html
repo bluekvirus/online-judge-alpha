@@ -2,12 +2,12 @@
 <head>
 	<title> Online Judge Prototype </title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/sketchy/bootstrap.min.css">
+		<link rel="stylesheet" href="lib/codemirror.css">
+	<link rel="stylesheet" href="lib/theme/abcdef.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/sketchy/bootstrap.min.css">
 	<script src="lib/codemirror.js"></script>
-	<link rel="stylesheet" href="lib/codemirror.css">
-	<link rel="stylesheet" href="lib/theme/abcdef.css">
 	<script src="lib/javascript/javascript.js"></script>
 	<script src="lib/mode/python/python.js"></script>
 	<script src="lib/mode/javascript/javascript.js"></script>
@@ -30,11 +30,8 @@
 				    else{
 				    	//already started
 				    	$('.submit-btn').click(submitProblem);
-
 		    			setEditor();
-
 			    		startTimer();
-			    		//setTimeout(step, interval)
 				    	preloadResults();
 				    }
 				
@@ -63,19 +60,19 @@
 		}
 
 		function startTimer(){
-			fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/time').then((res) =>{
-					return res.json();
-					}).then((data) => {
-						if (data["Time"] == 0){
-							//set time as zero, even if invalid already
-							$('#timer').html('00:00:00');
-						}
-					//else figure out the correct time to display
-						var startTime = new Date(data["Time"]);
-						initialMillis = Date.now();
-						count = 3600000 - (Math.abs(initialMillis - startTime));
-			    		counter = setInterval(timer, 1);
-					});
+			fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/time')
+			.then((res) =>{
+				return res.json();
+			}).then((data) => {
+				if (data["Time"] == 0){
+					//set time as zero, even if invalid already
+					$('#timer').html('00:00:00');
+				}
+				var startTime = new Date(data["Time"]);
+				initialMillis = Date.now();
+				count = 3600000 - (Math.abs(initialMillis - startTime));
+	    		counter = setInterval(timer, 1);
+			});
 		}
 
 		function timer() {
@@ -84,50 +81,49 @@
 		        return;
 		    }
 		    var current = Date.now();
-
 		    count = count - (current - initialMillis);
 		    initialMillis = current;
 		    displayCount(count);
 		}
 
 		function displayCount(count) {
-		     var hours = count / (1000*60*60);
-		  var absoluteHours = Math.floor(hours);
-		  var h = absoluteHours > 9 ? absoluteHours : '0' + absoluteHours;
+			var hours = count / (1000*60*60);
+			var absoluteHours = Math.floor(hours);
+			var h = absoluteHours > 9 ? absoluteHours : '0' + absoluteHours;
 
-		  //Get remainder from hours and convert to minutes
-		  var minutes = (hours - absoluteHours) * 60;
-		  var absoluteMinutes = Math.floor(minutes);
-		  var m = absoluteMinutes > 9 ? absoluteMinutes : '0' +  absoluteMinutes;
+			//Get remainder from hours and convert to minutes
+			var minutes = (hours - absoluteHours) * 60;
+			var absoluteMinutes = Math.floor(minutes);
+			var m = absoluteMinutes > 9 ? absoluteMinutes : '0' +  absoluteMinutes;
 
-		  //Get remainder from minutes and convert to seconds
-		  var seconds = (minutes - absoluteMinutes) * 60;
-		  var absoluteSeconds = Math.floor(seconds);
-		  var s = absoluteSeconds > 9 ? absoluteSeconds : '0' + absoluteSeconds;
-		    $('#timer').html( h + ':' + m + ':' + s);
+			//Get remainder from minutes and convert to seconds
+			var seconds = (minutes - absoluteMinutes) * 60;
+			var absoluteSeconds = Math.floor(seconds);
+			var s = absoluteSeconds > 9 ? absoluteSeconds : '0' + absoluteSeconds;
+			$('#timer').html( h + ':' + m + ':' + s);
 		}
 
 		function startInterview(){
  			fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/start')
- 				.then((res) =>{
-	 				return res;
- 				})
- 				.then((data) => {
- 					return fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/problems');
- 				})
-				.then((res) => {
-					return res.text();
-				})
-				.then((data) => {
-					$('#front-end-container').html(data);
-					$('.submit-btn').click(submitProblem);
-					setEditor();
-					startTimer();
-					preloadResults();
-				})
-				.catch((error) =>{
-					console.log(error);
-				});	
+			.then((res) =>{
+				return res;
+			})
+			.then((data) => {
+				return fetch('http://localhost:8000/judge/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/problems');
+			})
+			.then((res) => {
+				return res.text();
+			})
+			.then((data) => {
+				$('#front-end-container').html(data);
+				$('.submit-btn').click(submitProblem);
+				setEditor();
+				startTimer();
+				preloadResults();
+			})
+			.catch((error) =>{
+				console.log(error);
+			});	
 		}
 
 		function preloadResults(){
@@ -147,16 +143,14 @@
 					$div.append($list);
 					obj.append($div);
 				});
-
 			});
 		}
 
 		function addToList($list, item, flag){
 			var $li = $('<li>');
 			var $time = $('<span style = "padding-right: 2em; color: gray;">');
-			var d = new Date(item['submit_at'])
-			var offset = d.getTimezoneOffset();
-			var hours = offset/60;
+			var d = new Date(item['submit_at']);
+			var hours = d.getTimezoneOffset/60;
 			d.setHours(d.getUTCHours() - hours);
 			var newD = d.toString().split(' ').slice(0,5).join(' ');
 			$time.text(newD);
@@ -214,7 +208,7 @@
 		}
 
 		function submitProblem(event){
-			var mydata = {}
+			var mydata = {};
 			mydata['pid'] = event.target.getAttribute("data-problem-id");
 			var $textpane = $('.text-pane[data-problem-id=' + mydata['pid'] + ']');
 			editor = $textpane.find('.CodeMirror')[0].CodeMirror;
@@ -235,7 +229,6 @@
 			}).then((res) => {
 				return res.json();
 			}).then((data) => {
-				console.log(data)
 				if(data.hasOwnProperty('Timeup')){
 					//make a modal pop up interview has ended
 					createModal();
