@@ -25,4 +25,3 @@ urlpatterns = [
 	url(r'^', include(services.url('myservices', noprefix = True))),
 ]
 
-#127.0.0.1:8000/api/v1/getSession

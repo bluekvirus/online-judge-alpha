@@ -33,6 +33,7 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 		currtime = timezone.now()
 		if((timezone.now() - query[0].started_at).total_seconds() > 3600): #10800
 			query[0].status = "Completed" #should this be here?
+			query[0].save()
 			return res.json({"Timeup": "Interview has ended" })
 		#blockSubmit = Submission.objects.filter(interview__hash_str = hashstr).filter(problem__id=pid).filter(result)
 		blockSubmit = Submission.objects.filter(Q(interview__hash_str = hashstr), Q(problem__id = pid), Q(result="Processing") |
@@ -166,14 +167,12 @@ def getInterview(req, res, hashstr, *args, **kwargs):
 @service
 def formPost(req, res, *args, **kwargs):
 	form = EmailForm(req.POST)
+	context = {}
 	if form.is_valid():
 		email = form.cleaned_data['user_email']
-		query = Interview.objects.filter(candidate__user_name = email)
+		query = Interview.objects.filter(candidate__user_name = email).exclude(status="Completed").order_by('created_at')
 		if query:
-			context = {
-				'hashstr' : query[0].hash_str,
-			}
-			template = loader.get_template('myservices/interview.html')
-		res.html(template.render(context))
-		res.status(200)
-
+			context['hashstr'] =  query[0].hash_str
+	template = loader.get_template('myservices/interview.html')
+	res.html(template.render(context))
+	res.status(200)
