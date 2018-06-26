@@ -1,0 +1,280 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<head>
+	<title> Online Judge Prototype </title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/sketchy/bootstrap.min.css">
+	<link rel="stylesheet" href="{% static 'lib/codemirror.css' %}">
+	<link rel="stylesheet" href="{% static 'lib/theme/abcdef.css' %}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+	<script src="{% static 'lib/codemirror.js' %}"></script>
+	<script src="{% static 'lib/javascript/javascript.js' %}"></script>
+	<script src="{% static 'lib/mode/python/python.js' %}"></script>
+	<script src="{% static 'lib/mode/javascript/javascript.js' %}"></script>
+</head>
+<body>
+	{% block content %}
+	<div id="front-end-container" style="position:absolute; top: 0; bottom: 0; right: 0; left: 0;"></div>
+	<script>
+		$(document).ready(function(){
+			fetch('http://localhost:8000/interview/{{hashstr}}/problems')
+				.then((res) => {
+			        return res.text();
+				})
+				.then((data) => {
+				    var container = $('#front-end-container');
+				    container.html(data);
+				    startbtn = $('#start-btn');
+				    if(startbtn.length > 0){
+				    	startbtn.click(startInterview);
+				    }
+				    else{
+				    	//already started
+				    	$('.submit-btn').click(submitProblem);
+		    			setEditor();
+			    		startTimer();
+				    	preloadResults();
+				    }
+				
+				});
+
+		});
+
+		function setEditor(){
+			$('.text').each(function(index, obj){
+				var myCodeMirror = CodeMirror.fromTextArea(obj, {mode: {name:"python", version: 3} ,lineNumbers: true,  matchBrackets: true, styleActiveLine: true , theme: "abcdef", indentWithTabs: true});
+				myCodeMirror.setSize(null, '100%');
+				$codemirror = $(this).next('.CodeMirror');
+				$codemirror.find('.CodeMirror-gutter').css('width', '29px');
+				$codemirror.find('.CodeMirror-gutter-wrapper').css('left', '-31px');
+				$sizer = $codemirror.find('.CodeMirror-sizer');
+				$sizer.css('min-width', '7px');
+				$sizer.css('margin-left', '31px');
+				$line = $codemirror.find('.CodeMirror-linenumber').css('width', '21px');
+			});
+
+			 $('[id^="sel"]').change(function(){
+				editor = $(this).next('.text-pane').find('.CodeMirror')[0].CodeMirror;
+    			editor.setOption("mode", $(this).val());
+    		});
+
+		}
+
+		function startTimer(){
+			fetch('http://localhost:8000/interview/{{hashstr}}/time')
+			.then((res) =>{
+				return res.json();
+			}).then((data) => {
+				if (data["Time"] == 0){
+					//set time as zero, even if invalid already
+					$('#timer').html('00:00:00');
+				}
+				var startTime = new Date(data["Time"]);
+				initialMillis = Date.now();
+				count = 3600000 - (Math.abs(initialMillis - startTime));
+	    		counter = setInterval(timer, 1);
+			});
+		}
+
+		function timer() {
+		    if (count <= 0) {
+		        clearInterval(counter);
+		        return;
+		    }
+		    var current = Date.now();
+		    count = count - (current - initialMillis);
+		    initialMillis = current;
+		    displayCount(count);
+		}
+
+		function displayCount(count) {
+			var hours = count / (1000*60*60);
+			var absoluteHours = Math.floor(hours);
+			var h = absoluteHours > 9 ? absoluteHours : '0' + absoluteHours;
+
+			//Get remainder from hours and convert to minutes
+			var minutes = (hours - absoluteHours) * 60;
+			var absoluteMinutes = Math.floor(minutes);
+			var m = absoluteMinutes > 9 ? absoluteMinutes : '0' +  absoluteMinutes;
+
+			//Get remainder from minutes and convert to seconds
+			var seconds = (minutes - absoluteMinutes) * 60;
+			var absoluteSeconds = Math.floor(seconds);
+			var s = absoluteSeconds > 9 ? absoluteSeconds : '0' + absoluteSeconds;
+			$('#timer').html( h + ':' + m + ':' + s);
+		}
+
+		function startInterview(){
+ 			fetch('http://localhost:8000/interview/{{hashstr}}/start')
+			.then((res) =>{
+				return res;
+			})
+			.then((data) => {
+				return fetch('http://localhost:8000/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/problems');
+			})
+			.then((res) => {
+				return res.text();
+			})
+			.then((data) => {
+				$('#front-end-container').html(data);
+				$('.submit-btn').click(submitProblem);
+				setEditor();
+				startTimer();
+				preloadResults();
+			})
+			.catch((error) =>{
+				console.log(error);
+			});	
+		}
+
+		function preloadResults(){
+			$('.result-pane').each(function(i, obj){
+				var obj = $(this);
+				var url = 'http://localhost:8000/interview/{{hashstr}}/results?pid=';
+				url += obj.attr('data-problem-id');
+				fetch(url).then((res) => {
+					return res.json();
+				}).then((data) => {
+					//now convert the data into list elements and display
+					$list = $('<ul class="reslist" style="list-style-type: none;">');
+					$(data).each(function(index, item){
+						addToList($list, item.fields, true);
+					});
+					$div = $('<div style="float:left; width: 90%; text-align:center; padding-left: 10%; padding-right: 10%">');
+					$div.append($list);
+					obj.append($div);
+				});
+			});
+		}
+
+		function addToList($list, item, flag){
+			var $li = $('<li>');
+			var $time = $('<span style = "padding-right: 2em; color: gray;">');
+			var d = new Date(item['submit_at']);
+			var hours = d.getTimezoneOffset/60;
+			d.setHours(d.getUTCHours() - hours);
+			var newD = d.toString().split(' ').slice(0,5).join(' ');
+			$time.text(newD);
+			var str = '<span style="color:';
+			//if queued or processing
+			if(item['result'] == "Queued" || item['result'] == "Processing"){
+				str += '#17a2b8">';
+			}
+			else if(item['result'] == "Accepted"){
+				str += '#28a745">';
+			}
+			else if(item['result'] == "Wrong Answer"){
+				str += '#dc3545">';
+			}
+			else{
+				str += '#ffc107">';
+			}
+			var $result = $(str);
+			$result.text(item['result']);
+			$li.append($time);
+			$li.append($result);
+			if (flag){
+				$list.append($li);
+			}
+			else{
+				$list.prepend($li);
+			}
+			return $li
+		}
+
+		function createModal(){
+
+			var myvar = '<div class="modal" id="time-modal" tabindex="-1" role="dialog">'+
+			'  <div class="modal-dialog" role="document">'+
+			'    <div class="modal-content">'+
+			'      <div class="modal-header">'+
+			'        <h5 class="modal-title">Submission Error!</h5>'+
+			'        <button type="button" class="close" data-dismiss="modal" aria-label="Close">'+
+			'          <span aria-hidden="true">×</span>'+
+			'        </button>'+
+			'      </div>'+
+			'      <div class="modal-body">'+
+			'        <p>Sorry, it seems that your interview session has ended. If you believe this is incorrect please contact the recruiter.</p>'+
+			'      </div>'+
+			'      <div class="modal-footer">'+
+			'        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+			'      </div>'+
+			'    </div>'+
+			'  </div>'+
+			'</div>';
+			$('body').append(myvar);
+			$('#time-modal').modal();
+			$('#time-modal').modal('show');
+
+		}
+
+		function submitProblem(event){
+			var mydata = {};
+			mydata['pid'] = event.target.getAttribute("data-problem-id");
+			var $textpane = $('.text-pane[data-problem-id=' + mydata['pid'] + ']');
+			editor = $textpane.find('.CodeMirror')[0].CodeMirror;
+			mydata['code'] = editor.getValue();
+			mode = editor.getMode().name;
+			if(mode === "python"){
+				mydata['language'] = "python3";
+			}else{
+				mydata['language'] = "javascript";
+			}
+			fetch('http://localhost:8000/interview/{{hashstr}}/submit',{
+				method: 'post',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(mydata)
+			}).then((res) => {
+				return res.json();
+			}).then((data) => {
+				if(data.hasOwnProperty('Timeup')){
+					//make a modal pop up interview has ended
+					createModal();
+				}
+				else if(!data.hasOwnProperty('Error')){
+					var $resultpane = $('.result-pane[data-problem-id=' + mydata['pid'] + ']');
+					var $list = $resultpane.find('ul.reslist');
+					var $li = addToList($list, data , false);
+					if(data['result'] == "Queued" || data['result'] == "Processing"){
+						//need to start polling until get result
+						setTimeout(startPoll,2000, $li, mydata['pid'], data['submit_id']);
+					}
+				}	
+			
+			});
+		}
+
+		function startPoll($li, pid, sid){
+			var url = 'http://localhost:8000/interview/{{hashstr}}/poll?pid=';
+			url += pid;
+			url += "&sid=";
+			url += sid;
+			fetch(url).then((res) => {
+				return res.json();
+			}).then((data) => {
+				if(data[0].fields['result'] == "Queued" || data[0].fields['result'] == "Processing"){
+					setTimeout(startPoll,2000, $li, pid, sid);
+				}else{
+					$result = $li.find('span:last');
+					if(data[0].fields['result'] == "Accepted"){
+						$result.css('color', '#28a745')
+					}
+					else if(data[0].fields['result'] == "Wrong Answer"){
+						$result.css('color', '#dc3545')
+					}
+					else{
+						$result.css('color', '#ffc107')
+					}
+					$result.text(data[0].fields['result']);
+				}
+			});
+		}
+	</script>
+	{% endblock %}
+</body>
+</html>
+

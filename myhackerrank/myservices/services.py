@@ -9,7 +9,7 @@ from django.core import serializers
 from django.utils import timezone
 from django.template import loader
 from django.db.models import Q
-from django.utils.dateformat import format
+from .forms import EmailForm
 
 
 @url('interview/getAuth')
@@ -23,9 +23,6 @@ def getAuth(req, res, *args, **kwargs):
 @methods('POST')
 @service
 def postSubmission(req, res, hashstr, *args, **kwargs):
-	f = open('/app/hrank.txt', "r")
-	contents = json.load(f)
-	f.close()
 	code = req.json['code']
 	language = req.json['language']
 	pid = req.json['pid'] #does this become problem id then??
@@ -41,6 +38,9 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 		blockSubmit = Submission.objects.filter(Q(interview__hash_str = hashstr), Q(problem__id = pid), Q(result="Processing") |
 			Q(result="Queued") | Q(result = None))
 		if query[0].problems.filter(id=pid).exists() and not blockSubmit:
+			f = open('/app/hrank.txt', "r")
+			contents = json.load(f)
+			f.close()
 			problem = Problem.objects.get(id=pid)
 			interview = query[0]
 			b = Submission(interview=interview, submit_id=None, result=None, problem=problem)
@@ -55,8 +55,6 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 			b.submit_id = submit_id
 			b.result = status
 			b.save()
-			# format(b.submit_at, 'd M, Y g:i'
-			#could be processing or queued
 			return res.json({'submit_id': submit_id, 'result': status, 'submit_at': b.submit_at})
 	return res.json({"Error": "Cannot Submit"})
 
@@ -95,7 +93,7 @@ def pollResult(req, res, hashstr, *args, **kwargs):
 @url('interview/([a-zA-Z0-9]*)/problems')
 @methods('GET')
 @service
-def interview(req, res, hashstr, *args, **kwargs):
+def getProblems(req, res, hashstr, *args, **kwargs):
 	#this one will check validity of the hash string passed in as 
 	query = Interview.objects.filter(hash_str=hashstr)
 	if not query: #or query.exist()
@@ -152,9 +150,30 @@ def getTime(req, res, hashstr, *args, **kwargs):
 def welcome(req, res, *args, **kwargs):
 	return res.html( '<div style = "text-align: center; font-size: 40px;">' + '<p style="color: 5F9EA0"> Hello World! </p>' + '</div>')
 
+@url('interview/([a-zA-Z0-9]*)')
+@methods('GET')
+@service
+def getInterview(req, res, hashstr, *args, **kwargs):
+	context = {
+		'hashstr' : hashstr,
+	}
+	template = loader.get_template('myservices/interview.html')
+	res.html(template.render(context))
+	res.status(200)
 
-
-
-
-
+@url('interview')
+@methods('POST')
+@service
+def formPost(req, res, *args, **kwargs):
+	form = EmailForm(req.POST)
+	if form.is_valid():
+		email = form.cleaned_data['user_email']
+		query = Interview.objects.filter(candidate__user_name = email)
+		if query:
+			context = {
+				'hashstr' : query[0].hash_str,
+			}
+			template = loader.get_template('myservices/interview.html')
+		res.html(template.render(context))
+		res.status(200)
 

@@ -17,10 +17,12 @@ from django.urls import path, include
 from django.conf.urls import url
 from express import services
 from django.contrib import admin
+from myservices import views
 
 urlpatterns = [
-   url(r'^admin/', admin.site.urls),
-   url(r'^judge/', include(services.url('myservices', noprefix = True))),
+	url(r'^admin/', admin.site.urls),
+	url(r'^$',views.landing, name='landing'),
+	url(r'^', include(services.url('myservices', noprefix = True))),
 ]
 
 #127.0.0.1:8000/api/v1/getSession

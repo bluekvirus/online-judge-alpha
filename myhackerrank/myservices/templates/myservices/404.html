@@ -1,9 +1,10 @@
+{% load staticfiles %}
 {% block content %}
 <div style="padding: 2em">
-	<img src="./images/fortinet-logo.png" alt="Fortinet" style="width: 200px; height: 20px;">
+	<img src= "{% static 'fortinet-logo.png' %}" alt="Fortinet" style="width: 200px; height: 20px;">
 </div>
 <div style="text-align:center; padding: 3em;">
-	<img src="./images/lost.png" alt="Lost" >
+	<img src="{% static 'lost.png' %}" alt="Lost" >
 	<h1 style="padding-top: 1em; font-size: 4rem"> 404 </h1>
 	<h2> You are lost! Please contact the recruiter </h2>
 </div>

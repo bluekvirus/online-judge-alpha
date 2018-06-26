@@ -1,9 +1,10 @@
+{% load staticfiles %}
 {% block content %}
 <div style="padding: 2em">
-	<img src="./images/fortinet-logo.png" alt="Fortinet" style="width: 200px; height: 20px;">
+	<img src="{% static 'fortinet-logo.png' %}" alt="Fortinet" style="width: 200px; height: 20px;">
 </div>
 <div style="text-align:center; padding: 3em; font-size: 25px;">
-	<img src="./images/light-bulb.png" alt="Lightbulb" >
+	<img src="{% static 'light-bulb.png' %}" alt="Lightbulb" >
 	<p style="padding-top: 3em; padding-bottom: 2em"> Please press the button below to start the interview coding challenge, when you are ready. </p>
 	<button id="start-btn" class="btn btn-outline-primary" type="button"> Start Interview! </button>
 </div>
