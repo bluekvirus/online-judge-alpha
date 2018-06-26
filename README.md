@@ -7,7 +7,7 @@ By utilizing Docker containers, the startup procedure is greatly simplified.
 Please follow these steps to begin using the container for your frontend coding platform needs. 
 
  1. Download or clone this repo
-  `git clone https://github.com/ch3riee/container-judge-hackerrank.git .`
+  `git clone https://cmhuang2704@bitbucket.org/cmhuang2704/codingjudgeplatform.git .`
   2. Start up docker services
     `docker-compose up`
  3. Test
