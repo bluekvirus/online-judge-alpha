@@ -31,6 +31,7 @@ There is no need to use the admin site to add problems. Instead, place all of yo
 ### How To Access The Interview 
 There are two ways in which a candidate can access the interview. If there is anything wrong with the request, a 404 page will be displayed.
 1) To **GET** the interview, if the candidate knows their unique interview hash string, directly access `http://localhost:8000/interview/**hashstr**`.
+
 2) If the candidate email is known instead, **GET** at `http://localhost:8000/`. This will present the candidate with a simple form that takes in their email. If the candidate has multiple interviews assigned to them, any "Completed" interviews are filtered out, and the interview with the oldest created_at timestamp is rendered and displayed to the candidate. 
 
 ### RESTFUL API METHODS
