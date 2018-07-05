@@ -111,7 +111,7 @@
 				return res;
 			})
 			.then((data) => {
-				return fetch('http://localhost:8000/interview/WDujPVdVgkqgj1Mi5w3yOwBhCbvBZheIxZPqk6k2SwkKbLGzcJBNEv4hCswOVpzK/problems');
+				return fetch('http://localhost:8000/interview/{{hashstr}}/problems');
 			})
 			.then((res) => {
 				return res.text();
