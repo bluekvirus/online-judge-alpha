@@ -152,7 +152,7 @@
 			var $li = $('<li>');
 			var $time = $('<span style = "padding-right: 2em; color: gray;">');
 			var d = new Date(item['submit_at']);
-			var hours = d.getTimezoneOffset/60;
+			var hours = d.getTimezoneOffset()/60;
 			d.setHours(d.getUTCHours() - hours);
 			var newD = d.toString().split(' ').slice(0,5).join(' ');
 			$time.text(newD);
