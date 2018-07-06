@@ -3,3 +3,4 @@ django-express==0.3.2
 requests==2.9.1
 kafka-python==1.4.3
 django-cors-headers==2.2.0
+djangorestframework==3.8.2
