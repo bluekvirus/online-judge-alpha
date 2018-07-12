@@ -8,8 +8,7 @@ Please follow these steps to begin using the container for your frontend coding 
 
  1. Download or clone this repo
   `git clone https://cmhuang2704@bitbucket.org/cmhuang2704/codingjudgeplatform.git .`
-  2. Start up docker services </br>
-    `docker-compose build` </br>
+  2. Start up docker services
     `docker-compose up`
  3. Test
     Once the services are up, go to `localhost:8000/interview/hello`  to make sure it is up and running.
