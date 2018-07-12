@@ -11,4 +11,4 @@ do
 done
 echo "Connection to $SERVER on port $PORT succeeded"
 sleep 3s
-/entrypoint.sh
+/app/entrypoint.sh

@@ -1,6 +1,6 @@
 FROM python:3
-ADD requirements.txt .
-RUN pip install -r requirements.txt
+ADD requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
 RUN apt-get -y update
 RUN apt-get install -y cron
 RUN apt-get install -y libfreetype6 libfontconfig
@@ -15,10 +15,10 @@ RUN chmod 0644 /etc/cron.d/extract
 RUN crontab /etc/cron.d/extract
 ADD hackerrank.js /hackerrank.js
 ADD guarding.py /guarding.py
-ADD entrypoint.sh .
-ADD myhackerrank .
+ADD entrypoint.sh /app/entrypoint.sh
+ADD myhackerrank /app/myhackerrank
 ADD wait-on-kafka.sh .
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 RUN chmod +x /guarding.py 
 RUN chmod +x /wait-on-kafka.sh
 VOLUME /var/log
