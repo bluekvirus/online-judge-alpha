@@ -172,7 +172,8 @@ def formPost(req, res, *args, **kwargs):
 		email = form.cleaned_data['user_email']
 		query = Interview.objects.filter(candidate__user_name = email).exclude(status="Completed").order_by('created_at')
 		if query:
+			print("query is",query[0])
 			context['hashstr'] =  query[0].hash_str
-	template = loader.get_template('myservices/interview.html')
-	res.html(template.render(context))
-	res.status(200)
+		template = loader.get_template('myservices/interview.html')
+		res.html(template.render(context))
+		res.status(200)

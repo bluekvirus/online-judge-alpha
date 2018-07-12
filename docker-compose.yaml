@@ -30,6 +30,7 @@ services:
       - '8000:8000'
     volumes:
       - ./hrank.txt:/app/hrank.txt
+      - ./myhackerrank/db.sqlite3:/app/myhackerrank/db.sqlite3
       - ./myhackerrank:/app/myhackerrank
     depends_on:
       - kafka

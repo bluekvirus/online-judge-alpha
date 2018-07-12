@@ -25,11 +25,12 @@
 				.then((data) => {
 				    var container = $('#front-end-container');
 				    container.html(data);
+				    errorpage = $('#errorpage');
 				    startbtn = $('#start-btn');
 				    if(startbtn.length > 0){
 				    	startbtn.click(startInterview);
 				    }
-				    else{
+				    else if(errorpage.length == 0){
 				    	//already started
 				    	$('.submit-btn').click(submitProblem);
 		    			setEditor();
