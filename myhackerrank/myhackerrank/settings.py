@@ -28,11 +28,14 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'chuang3'
-EMAIL_HOST_PASSWORD = 'hackerrank3'
+EMAIL_HOST_USER = 'chuang4'
+EMAIL_HOST_PASSWORD = 'hackerrank4'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+DEFAULT_DOMAIN = 'wat.fws.fortinet.com'
 
 # Application definition
 
