@@ -9,10 +9,11 @@ Please follow these steps to begin using the container for your frontend coding 
  1. Download or clone this repo
   `git clone https://cmhuang2704@bitbucket.org/cmhuang2704/codingjudgeplatform.git .`
   2. Start up docker services, and provide environment variables for Hackerrank credentials, and SendGrid credentials.
-  Necessary for automatically sending email with interview link after interview creation via Django Admin Site. Valid hackerrank credentials are needed for retrieving Hackerrank session as well as for interview submissions and results.
-  
-    `docker-compose run --service-ports -e HRANK_USER='<hackerrank username>' -e HRANK_PWD='<hackerrank pwd>'
-    -e EMAIL_HOST_USER='<sendgrid username>' -e EMAIL_HOST_PWD='<sendgrid pwd>' srvhackerrank`
+  Necessary for automatically sending email with interview link after interview creation via Django Admin Site. Valid hackerrank credentials are needed for retrieving Hackerrank session as well as for interview submissions and results. </br>
+```
+docker-compose run --service-ports -e HRANK_USER='<hackerrank username>' -e HRANK_PWD='<hackerrank pwd>' 
+-e EMAIL_HOST_USER='<sendgrid username>' -e EMAIL_HOST_PWD='<sendgrid pwd>' srvhackerrank
+```
     
  3. Test
     Once the services are up, go to `localhost:8000/interview/hello`  to make sure it is up and running.
