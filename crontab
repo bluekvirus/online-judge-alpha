@@ -1,2 +1,2 @@
-*/5 * * * * root . /app/project_env.sh; /usr/local/bin/python  -u /guarding.py $(hostname) >> /var/log/cron.log 2>&1
+0 */4 * * * root . /app/project_env.sh; /usr/local/bin/python  -u /guarding.py $(hostname) >> /var/log/cron.log 2>&1
 
