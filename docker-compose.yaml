@@ -32,6 +32,9 @@ services:
       - ./hrank.txt:/app/hrank.txt
       - ./myhackerrank/db.sqlite3:/app/myhackerrank/db.sqlite3
       - ./myhackerrank:/app/myhackerrank
+      - ./.env:/.env
+    env_file: 
+      - ./.env
     depends_on:
       - kafka
       - zookeeper

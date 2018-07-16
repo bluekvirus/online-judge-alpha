@@ -1,5 +1,6 @@
 var page = require('webpage').create();
-
+var system = require('system');
+var env = system.env;
 
 page.onConsoleMessage = function(msg) {
     //console.log('remote> ' + msg);
@@ -42,12 +43,12 @@ setTimeout(function(){
 			console.log('Unable to access network');
 		} else{
 
-			token = page.evaluate(function(){
-				document.querySelector('input#login').value = "chuang3";
-				document.querySelectorAll('input#password')[1].value = "hackerrank";
+			token = page.evaluate(function(username, pwd){
+				document.querySelector('input#login').value = username;
+				document.querySelectorAll('input#password')[1].value = pwd;
 				document.getElementsByClassName('login-button')[0].click();
 				return document.querySelector("meta[name=csrf-token]").getAttribute("content");
-			});
+			},env['HRANK_USER'], env['HRANK_PWD']);
 		}
 
 	});

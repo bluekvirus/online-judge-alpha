@@ -4,10 +4,10 @@ import re
 import sys
 import json
 import requests
+import os
 
 cmd = ['/usr/local/bin/phantomjs', '/hackerrank.js']
 for i in range(40):
-	print(i)
 	try:
 		p = subprocess.run(cmd, timeout=60, stdout=subprocess.PIPE)
 	except subprocess.TimeoutExpired:
@@ -15,8 +15,8 @@ for i in range(40):
 		time.sleep(300) #sleep for 5 minutes before retry again
 	else:
 		ret  = p.stdout.decode().rstrip()
-		if( ret == "Unable to access network"):
-			print("Unable to access network")
+		if( ret == "Unable to access network" or not ret):
+			print("Error")
 			time.sleep(300)
 			continue
 		regexp = re.compile('hrank=(.*)')

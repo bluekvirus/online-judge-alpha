@@ -59,8 +59,7 @@ class Interview(models.Model):
 			self.created_at = timezone.now()
 		super(Interview, self).save()
 		message = settings.DEFAULT_DOMAIN + '/interview/' + self.hash_str
-		send_mail('Fortinet Interview Link', message , 'hello@fortinet.com', ['chuang@fortinet.com'], fail_silently=False)
-
+		send_mail('Fortinet Interview Link', message , 'interview@fortinet.com', ['cheriemhuang@gmail.com', 'ch3riee@gmail.com'], fail_silently=False)
 #each submission has a foreign key to the candidate it belongs to as well as the interview?? Many submissions for one interview and one candidate
 
 class Submission(models.Model):

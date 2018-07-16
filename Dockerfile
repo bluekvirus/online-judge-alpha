@@ -18,6 +18,7 @@ ADD guarding.py /guarding.py
 ADD entrypoint.sh /app/entrypoint.sh
 ADD myhackerrank /app/myhackerrank
 ADD wait-on-kafka.sh .
+ADD .env .
 RUN chmod +x /app/entrypoint.sh
 RUN chmod +x /guarding.py 
 RUN chmod +x /wait-on-kafka.sh
