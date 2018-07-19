@@ -29,14 +29,12 @@ ALLOWED_HOSTS = []
 
 
 EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PWD')
+EMAIL_HOST_USER = os.getenv('SENDGRID_USER')
+EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_PWD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 DEFAULT_DOMAIN = 'wat.fws.fortinet.com'
-
-
 
 # Application definition
 
