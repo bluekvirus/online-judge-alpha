@@ -7,10 +7,30 @@ By utilizing Docker containers, the startup procedure is greatly simplified.
 Please follow these steps to begin using the container for your frontend coding platform needs. 
 
  1. Download or clone this repo
+ 
   `git clone https://cmhuang2704@bitbucket.org/cmhuang2704/codingjudgeplatform.git .`
-  2. Start up docker services
-    `docker-compose up`
- 3. Test
+ 2. Add .env file to project root. This file is required and sets up the environment variables to securely pass your hackerrank authentication info as well as sendgrid authentication info. Please also pass in desired email send address for interviews. (PLEASE create accounts for hackerrank and sendgrid if you have not done so, this is REQUIRED)
+  ```
+  HRANK_USER=<hackerrank username>
+  HRANK_PWD=<hackerrank pwd>
+  SENDGRID_USER=<sendgrid username>
+  SENDGRID_PWD=<hackerrank pwd>
+  NOTIFICATION_EMAIL_SENDER=<desired send email address>
+
+  ```
+ 3. Check settings.py defaults
+ Go to settings.py file under myhackerrank/myhackerrank. Please double check that the defaults for these keys are correct, and change if necessary. The PROBLEM_PATH_PREFIX is the prefix that will be added to the saved Problem model file path, in order to properly bring up the problem html stubs within the Docker container. By default this will mean that all problems exist under /app/problems/<difficulty>/*.html. The DEFAULT_DOMAIN is the default domain that will be used for the interview link. The INTERVIEW_DURATION is the desired length of time given to an interview. By default this is one hour or 3600 seconds.
+ ```
+ DEFAULT_DOMAIN = 'wat.fws.fortinet.com'
+ PROBLEM_PATH_PREFIX = '/app/'
+ INTERVIEW_DURATION = 3600 
+ ```
+ 4. Start up docker services.
+  There is no need to run migrate for the DB because it is already set up with admin password and username. The rest of the DB   will be empty and ready for use.
+   `docker-compose up`
+ 5. Bootstrap Problems
+   Please bootstrap problems at this time, following the Add Problems section described below under Usage.
+ 6. Test
     Once the services are up, go to `localhost:8000/interview/hello`  to make sure it is up and running.
     
 ## Usage
@@ -26,7 +46,13 @@ Once you have logged in successfully into the admin site, select **Add** next to
 From the home page of the admin site, select  **Add** next to Interview under the MyServices tab. Select a status in the dropdown, typically this will be draft when the Interview is first created. Then select an existing candidate or add a new candidate. Then choose as many problems as you would like for this interview. *Note:* Problems are easily added using the add_problems.py script. Details below in the next section. The hash string used to uniquely identify the interview, as well as the created-at and started-at timestamps will be automatically generated once the interview is saved.
 
 **4. Add Problems**
-There is no need to use the admin site to add problems. Instead, place all of your html problem descriptions inside of the problems folder. An example would be `/myhackerrank/problems/**difficulty**/problem-name.html`. In order to populate the database with new problems, go into `/myhackerrank` and run `python add_problems.py`. This script will automatically add the problem name, the path to the problem html file, and the difficulty. By following this folder structure for the problems folder, the backend will automatically create tabs holding the problem descriptions you have chosen for a particular interview. 
+There is no need to use the admin site to add problems. Instead, place all of your html problem descriptions inside of the problems folder, which is located at the project root under /problems. An example would be `problems/**difficulty**/problem-name.html`. In order to populate the database with new problems, follow these steps below. This addproblems command will automatically add the problem name, the path to the problem html file, and the difficulty to the database. By following this folder structure for the problems folder, the backend will automatically create tabs holding the problem descriptions you have chosen for a particular interview. Within the commandline, open up a new tab (once docker services are up). Then run the commands in order listed below.  NOTE: the problems/ folder is mounted into the container at /app/problems, and the django project is mounted at /app/myhackerrank. This will only add problems to existing ones, so if this is not the desired behavior and to avoid duplication, please clear the problems out of DB first or only run this command once.
+   ```
+    docker exec -it <name of srvhackerrank container, can be found with docker ps> bash
+    cd app
+    cd myhackerrank
+    python3 manage.py addproblems
+   ```
 
 ### How To Access The Interview 
 There are two ways in which a candidate can access the interview. If there is anything wrong with the request, a 404 page will be displayed.
