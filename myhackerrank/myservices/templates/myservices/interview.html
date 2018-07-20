@@ -65,16 +65,24 @@
 		function startTimer(){
 			fetch('http://localhost:8000/interview/{{hashstr}}/time')
 			.then((res) =>{
+				console.log(res)
 				return res.json();
 			}).then((data) => {
+				//invalid query hashstring
 				if (data["Time"] == 0){
-					//set time as zero, even if invalid already
 					$('#timer').html('00:00:00');
+					return;
 				}
 				var startTime = new Date(data["Time"]);
 				initialMillis = Date.now();
+				console.log(initialMillis - startTime)
 				count = 3600000 - (Math.abs(initialMillis - startTime));
-	    		counter = setInterval(timer, 1);
+				//no more time left
+				if (count < 0 ){
+					$('#timer').html('00:00:00');
+					return;
+				}
+				counter = setInterval(timer, 1);
 			});
 		}
 

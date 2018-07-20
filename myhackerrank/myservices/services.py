@@ -30,7 +30,6 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 	query = Interview.objects.filter(hash_str=hashstr).filter(status="Started")
 	if query:
 		#check how much time has elapsed. for now leave it at 3 hours for max
-		currtime = timezone.now()
 		if((timezone.now() - query[0].started_at).total_seconds() > settings.INTERVIEW_DURATION): #10800 #read from interview model
 			query[0].status = "Completed" #should this be here?
 			query[0].save()
@@ -142,7 +141,8 @@ def startInterview(req, res, hashstr, *args, **kwargs):
 def getTime(req, res, hashstr, *args, **kwargs):
 	query = Interview.objects.filter(hash_str=hashstr)
 	if(query):
-		return res.json({"Time":query[0].started_at})
+		if((timezone.now() - query[0].started_at).total_seconds() < settings.INTERVIEW_DURATION): #10800 #read from interview model
+			return res.json({"Time":query[0].started_at})
 	return res.json({"Time": 0})
 
 @url('interview/hello')
