@@ -9,12 +9,9 @@ import requests
 
 class MyservicesConfig(AppConfig):
 	name = 'myservices'
-	def ready(self):
+	def worker(self):
 		from .models import Submission
-		t = Thread(target=worker)
-		t.start()
-
-	def worker():
+		print("starting worker")
 		consumer = KafkaConsumer('hrank_results', bootstrap_servers='kafka:9092', api_version=(1,4,3), security_protocol="SASL_PLAINTEXT", sasl_mechanism='PLAIN', sasl_plain_username='user', sasl_plain_password='bitnami', value_deserializer=lambda m: json.loads(m.decode('utf-8')))
 		f = open('/app/hrank.txt', "r")
 		contents = json.load(f)
@@ -34,6 +31,11 @@ class MyservicesConfig(AppConfig):
 					query= Submission.objects.get(submit_id=sid)
 					query.result = status
 					query.save()
+
+	def ready(self):
+		t = Thread(target=self.worker)
+		t.start()
+
 
 
 
