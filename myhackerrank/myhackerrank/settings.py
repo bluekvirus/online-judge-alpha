@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'express',
     'myservices',
     'corsheaders',
-    'rest_framework',
-    'myrest',
 ]
 
 MIDDLEWARE = [

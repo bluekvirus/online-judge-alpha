@@ -6,21 +6,11 @@ Our online coding judge docker container, encapsulates a fully functioning backe
 By utilizing Docker containers, the startup procedure is greatly simplified. 
 Please follow these steps to begin using the container for your frontend coding platform needs. 
 
- 1. Download or clone this repo </br>
+ 1. Download or clone this repo
   `git clone https://cmhuang2704@bitbucket.org/cmhuang2704/codingjudgeplatform.git .`
- 2. Provide a .env file within project root. This .env file will be used by Docker in order to securely provide Hackerrank user login and password information, as well as Sendgrid user and password information. It also contains the default email sender address that will be used for sending out emails after Interview creation via the admin site. Please follow the example below in how to structure this file.
- ```
- HRANK_USER=<hackerrank username>
- HRANK_PWD=<hackerrank password>
- SENDGRID_USER=<sendgrid username>
- SENDGRID_PWD=<sendgrid password>
- NOTIFICATION_EMAIL_SENDER=<desired send email address>
- ```
- 3. Start up docker services 
-```
- docker-compose up
-```
- 4. Test </br>
+  2. Start up docker services
+    `docker-compose up`
+ 3. Test
     Once the services are up, go to `localhost:8000/interview/hello`  to make sure it is up and running.
     
 ## Usage

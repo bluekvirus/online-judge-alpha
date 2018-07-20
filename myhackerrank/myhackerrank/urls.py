@@ -18,12 +18,10 @@ from django.conf.urls import url
 from express import services
 from django.contrib import admin
 from myservices import views
-from myrest import views as restviews
 
 urlpatterns = [
 	url(r'^admin/', admin.site.urls),
 	url(r'^$',views.landing, name='landing'),
-    url(r'^rest/([a-zA-Z0-9]*)/results$', restviews.getResults),
 	url(r'^', include(services.url('myservices', noprefix = True))),
 ]
 

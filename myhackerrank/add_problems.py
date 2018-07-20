@@ -5,7 +5,7 @@ django.setup()
 from myservices.models import Problem
 import re
 
-for root, subdirs, files in os.walk('./problems'):
+for root, subdirs, files in os.walk('../problems'):
 	for f in files:
 		regexp = re.compile('\.\/problems\/(.*)')
 		level = regexp.search(root).group(1)

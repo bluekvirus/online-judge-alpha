@@ -24,7 +24,7 @@ services:
 
   srvhackerrank:
     build:
-      context: .
+      context: ./docker-image
       dockerfile: Dockerfile
     ports:
       - '8000:8000'
@@ -32,8 +32,9 @@ services:
       - ./hrank.txt:/app/hrank.txt
       - ./myhackerrank/db.sqlite3:/app/myhackerrank/db.sqlite3
       - ./myhackerrank:/app/myhackerrank
+      - ./problems:/problems
     env_file: 
-      - ./.env
+      - .env
     depends_on:
       - kafka
       - zookeeper

@@ -31,7 +31,7 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 	if query:
 		#check how much time has elapsed. for now leave it at 3 hours for max
 		currtime = timezone.now()
-		if((timezone.now() - query[0].started_at).total_seconds() > 3600): #10800
+		if((timezone.now() - query[0].started_at).total_seconds() > 3600): #10800 #read from interview model
 			query[0].status = "Completed" #should this be here?
 			query[0].save()
 			return res.json({"Timeup": "Interview has ended" })
