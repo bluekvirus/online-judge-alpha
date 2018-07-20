@@ -15,6 +15,6 @@ class Command(BaseCommand):
                 regexp2 = re.compile('(.*)\.')
                 name = regexp2.search(f).group(1)
                 print(name)
-                p = Problem(difficulty=level, problem_name=name, problem_path=os.path.join('../',root, f))
+                p = Problem(difficulty=level, problem_name=name, problem_path=os.path.join(root[2:], f))
                 p.save()
             

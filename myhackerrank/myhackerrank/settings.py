@@ -35,6 +35,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 DEFAULT_DOMAIN = 'wat.fws.fortinet.com'
+PROBLEM_PATH_PREFIX = '/app/'
+INTERVIEW_DURATION = 3600 #this is in seconds, default is one hour
 
 # Application definition
 

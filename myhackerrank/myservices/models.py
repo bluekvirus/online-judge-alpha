@@ -29,7 +29,8 @@ class Problem(models.Model):
 		return '{} : {} : {}'.format(self.difficulty, self.problem_name, self.id)
 
 	def display_file(self):
-		with open(self.problem_path) as f:
+		filep = settings.PROBLEM_PATH_PREFIX + self.problem_path
+		with open(filep) as f:
 			return f.read()
 
 

@@ -31,7 +31,7 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 	if query:
 		#check how much time has elapsed. for now leave it at 3 hours for max
 		currtime = timezone.now()
-		if((timezone.now() - query[0].started_at).total_seconds() > 3600): #10800 #read from interview model
+		if((timezone.now() - query[0].started_at).total_seconds() > settings.INTERVIEW_DURATION): #10800 #read from interview model
 			query[0].status = "Completed" #should this be here?
 			query[0].save()
 			return res.json({"Timeup": "Interview has ended" })
@@ -169,11 +169,14 @@ def formPost(req, res, *args, **kwargs):
 	form = EmailForm(req.POST)
 	context = {}
 	if form.is_valid():
+		print("form is valid")
 		email = form.cleaned_data['user_email']
 		query = Interview.objects.filter(candidate__user_name = email).exclude(status="Completed").order_by('created_at')
 		if query:
-			print("query is",query[0])
-			context['hashstr'] =  query[0].hash_str
-		template = loader.get_template('myservices/interview.html')
-		res.html(template.render(context))
-		res.status(200)
+			url = 'interview/' + query[0].hash_str
+			res.redirect(url)
+			return 
+	template = loader.get_template('myservices/independent404.html')
+	res.html(template.render())
+	res.status(404)
+
