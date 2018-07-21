@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import Interview, Candidate, Submission, Problem
 
 class InterviewAdmin(admin.ModelAdmin):
-	readonly_fields = ('hash_str', 'created_at' , 'started_at')
+	readonly_fields = ('hash_str', 'created_at' , 'started_at', 'duration')
 
 class CandidateAdmin(admin.ModelAdmin):
 	readonly_fields = ('created_at',)

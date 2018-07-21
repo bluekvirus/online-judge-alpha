@@ -17,4 +17,5 @@ class Command(BaseCommand):
                 print(name)
                 p = Problem(difficulty=level, problem_name=name, problem_path=os.path.join(root[2:], f))
                 p.save()
+        return
             
