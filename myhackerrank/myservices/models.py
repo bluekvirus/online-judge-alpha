@@ -61,7 +61,7 @@ class Interview(models.Model):
 		if not self.id:
 			self.hash_str = random_string(64)
 			self.created_at = timezone.now()
-			self.duration = os.getenv('INTERVIEW_DURATION')
+			self.duration = settings.INTERVIEW_DURATION
 		super(Interview, self).save()
 		message = settings.DEFAULT_DOMAIN + '/interview/' + self.hash_str
 		send_mail('Fortinet Interview Link', message , os.getenv('NOTIFICATION_EMAIL_SENDER'), ['cheriemhuang@gmail.com', 'bluekvirus@gmail.com'], fail_silently=False)
