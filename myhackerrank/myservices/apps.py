@@ -4,6 +4,7 @@ from kafka import KafkaConsumer
 from kafka import KafkaProducer
 import json
 import requests
+import os
 
 
 
@@ -33,8 +34,10 @@ class MyservicesConfig(AppConfig):
 					query.save()
 
 	def ready(self):
-		t = Thread(target=self.worker)
-		t.start()
+			if not os.path.isfile('/app/noready.txt'):
+				f = open('/app/noready.txt', 'w+')
+				t = Thread(target=self.worker)
+				t.start()
 
 
 
