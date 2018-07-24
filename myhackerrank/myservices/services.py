@@ -87,7 +87,7 @@ def pollResult(req, res, hashstr, *args, **kwargs):
 	qjson = serializers.serialize('json', query)
 	j = json.loads(qjson)
 	if not j:
-		return res.json({"Error", "Invalid interview, submission id, or problem id"})
+		return res.json({"Error": "Invalid interview, submission id, or problem id"})
 	return res.json(j, safe=False)
 
 @url('interview/([a-zA-Z0-9]*)/problems')
@@ -169,7 +169,6 @@ def formPost(req, res, *args, **kwargs):
 	form = EmailForm(req.POST)
 	context = {}
 	if form.is_valid():
-		print("form is valid")
 		email = form.cleaned_data['user_email']
 		query = Interview.objects.filter(candidate__user_name = email).exclude(status="Completed").order_by('created_at')
 		if query:

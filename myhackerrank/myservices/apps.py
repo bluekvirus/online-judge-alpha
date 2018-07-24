@@ -34,10 +34,11 @@ class MyservicesConfig(AppConfig):
 					query.save()
 
 	def ready(self):
-			if not os.path.isfile('/app/noready.txt'):
-				f = open('/app/noready.txt', 'w+')
-				t = Thread(target=self.worker)
-				t.start()
+			if os.getenv('WITHIN_DOCKER') != None:
+				if not os.path.isfile('/app/noready.txt'):
+					f = open('/app/noready.txt', 'w+')
+					t = Thread(target=self.worker)
+					t.start()
 
 
 

@@ -39,4 +39,4 @@ services:
       - kafka
       - zookeeper
     environment:
-      - PYTHONUNBUFFERED=0
+      - WITHIN_DOCKER=yes
