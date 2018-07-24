@@ -25,12 +25,16 @@ Please follow these steps to begin using the container for your frontend coding 
  PROBLEM_PATH_PREFIX = '/app/'
  INTERVIEW_DURATION = 3600 
  ```
- 4. Start up docker services.
+ 4. Run command to migrate SQlite DB. 
+ Switch into the directory that holds the manage.py file for the Django project. Then run
+ `python3 manage.py migrate`
+ 
+ 5. Start up docker services.
   There is no need to run migrate for the DB because it is already set up with admin password and username. The rest of the DB   will be empty and ready for use.
    `docker-compose up`
- 5. Bootstrap Problems
+ 6. Bootstrap Problems
    Please bootstrap problems at this time, following the Add Problems section described below under Usage.
- 6. Test
+ 7. Test
     Once the services are up, go to `localhost:8000/interview/hello`  to make sure it is up and running.
     
 ## Usage
