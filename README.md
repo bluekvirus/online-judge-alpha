@@ -7,7 +7,7 @@ By utilizing Docker containers, the startup procedure is greatly simplified.
 Please follow these steps to begin using the container for your frontend coding platform needs. 
 
  1. Download or clone this repo </br>
-  `git clone https://cmhuang2704@bitbucket.org/cmhuang2704/codingjudgeplatform.git .`
+  `git clone https://github.com/ch3riee/online-judge-alpha.git .`
  2. Add .env file to project root. </br>
  This file is required and sets up the environment variables to securely pass your hackerrank authentication info as well as sendgrid authentication info. Please also pass in desired email send address for interviews. (PLEASE create accounts for hackerrank and sendgrid if you have not done so, this is REQUIRED)
   ```
