@@ -33,7 +33,7 @@ EMAIL_HOST_USER = os.getenv('SENDGRID_USER')
 EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_PWD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
+DEFAULT_DOMAIN = os.getenv('DEFAULT_DOMAIN')
 
 PROBLEM_PATH_PREFIX = '/app/'
 INTERVIEW_DURATION = 3600 #this is in seconds, default is one hour
