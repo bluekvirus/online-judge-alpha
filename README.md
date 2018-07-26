@@ -19,9 +19,8 @@ Please follow these steps to begin using the container for your frontend coding 
 
   ```
  3. Check settings.py defaults </br>
- Go to settings.py file under myhackerrank/myhackerrank. Please double check that the defaults for these keys are correct, and change if necessary. The PROBLEM_PATH_PREFIX is the prefix that will be added to the saved Problem model file path, in order to properly bring up the problem html stubs within the Docker container. By default this will mean that all problems exist under /app/problems/<difficulty>/*.html. The DEFAULT_DOMAIN is the default domain that will be used for the interview link. The INTERVIEW_DURATION is the desired length of time given to an interview. By default this is one hour or 3600 seconds.
+ Go to settings.py file under myhackerrank/myhackerrank. Please double check that the defaults for these keys are correct, and change if necessary. The PROBLEM_PATH_PREFIX is the prefix that will be added to the saved Problem model file path, in order to properly bring up the problem html stubs within the Docker container. By default this will mean that all problems exist under /app/problems/<difficulty>/*.html. The INTERVIEW_DURATION is the desired length of time given to an interview. By default this is one hour or 3600 seconds.
  ```
- DEFAULT_DOMAIN = 'wat.fws.fortinet.com'
  PROBLEM_PATH_PREFIX = '/app/'
  INTERVIEW_DURATION = 3600 
  ```
