@@ -10,8 +10,6 @@ services:
 
   kafka:
     image: bitnami/kafka:latest
-    ports:
-      - "9092:9092"
     depends_on:
       - zookeeper
     environment:

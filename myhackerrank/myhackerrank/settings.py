@@ -25,7 +25,7 @@ SECRET_KEY = 'a2tw_(qc4)r*%*a3sua*zv_lhj^_1eyfan0_kp(d2=i83xym#2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 EMAIL_HOST = 'smtp.sendgrid.net'

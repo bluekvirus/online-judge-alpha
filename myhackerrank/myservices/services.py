@@ -17,6 +17,7 @@ from .forms import EmailForm
 def getAuth(req, res, *args, **kwargs):
 	f = open('/app/hrank.txt', "r")
 	contents = json.load(f)
+	f.close()
 	res.json(contents)
 
 @url('interview/([a-zA-Z0-9]*)/submit')
