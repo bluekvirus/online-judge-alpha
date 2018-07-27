@@ -9,20 +9,20 @@ Please follow these steps to begin using the container for your frontend coding 
  1. Download or clone this repo </br>
   `git clone https://github.com/ch3riee/online-judge-alpha.git .`
  2. Add .env file to project root. </br>
- This file is required and sets up the environment variables to securely pass your hackerrank authentication info as well as sendgrid authentication info. Please also pass in desired email send address for interviews. (PLEASE create accounts for hackerrank and sendgrid if you have not done so, this is REQUIRED)
+ This file is required and sets up the environment variables to securely pass your hackerrank authentication info as well as sendgrid authentication info. Please also pass in desired email send address for interviews. The default domain is the domain that the interview platform will be hosted on. It is read by the setting.py file of Django. (PLEASE create accounts for hackerrank and sendgrid if you have not done so, this is REQUIRED)
   ```
   HRANK_USER=<hackerrank username>
   HRANK_PWD=<hackerrank pwd>
   SENDGRID_USER=<sendgrid username>
   SENDGRID_PWD=<hackerrank pwd>
   NOTIFICATION_EMAIL_SENDER=<desired send email address>
+  DEFAULT_DOMAIN=<desired default domain>
 
   ```
  3. Check settings.py defaults </br>
- Go to settings.py file under myhackerrank/myhackerrank. Please double check that the defaults for these keys are correct, and change if necessary. The PROBLEM_PATH_PREFIX is the prefix that will be added to the saved Problem model file path, in order to properly bring up the problem html stubs within the Docker container. By default this will mean that all problems exist under /app/problems/<difficulty>/*.html. The INTERVIEW_DURATION is the desired length of time given to an interview. By default this is one hour or 3600 seconds.
+ Go to settings.py file under myhackerrank/myhackerrank. Please double check that the defaults for these keys are correct, and change if necessary. The PROBLEM_PATH_PREFIX is the prefix that will be added to the saved Problem model file path, in order to properly bring up the problem html stubs within the Docker container. By default this will mean that all problems exist under /app/problems/<difficulty>/*.html. 
  ```
  PROBLEM_PATH_PREFIX = '/app/'
- INTERVIEW_DURATION = 3600 
  ```
  4. Run command to migrate SQlite DB. </br>
  Switch into the directory that holds the manage.py file for the Django project. Then run
