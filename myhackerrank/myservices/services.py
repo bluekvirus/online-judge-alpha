@@ -31,11 +31,11 @@ def postSubmission(req, res, hashstr, *args, **kwargs):
 	query = Interview.objects.filter(hash_str=hashstr).filter(status="Started")
 	if query:
 		#check how much time has elapsed. for now leave it at 3 hours for max
-		if((timezone.now() - query[0].started_at).total_seconds() > settings.INTERVIEW_DURATION): #10800 #read from interview model
+		if((timezone.now() - query[0].started_at).total_seconds() > (query[0].duration * 60 * 60)): #10800 #read from interview model
 			query[0].status = "Completed" #should this be here?
 			query[0].save()
 			return res.json({"Timeup": "Interview has ended" })
-		#blockSubmit = Submission.objects.filter(interview__hash_str = hashstr).filter(problem__id=pid).filter(result)
+		#blockSubmit = Submission.objects.filter(interview__hash_str = hashstr).filter(problem__id=pid).filter(conf)
 		blockSubmit = Submission.objects.filter(Q(interview__hash_str = hashstr), Q(problem__id = pid), Q(result="Processing") |
 			Q(result="Queued") | Q(result = None))
 		if query[0].problems.filter(id=pid).exists() and not blockSubmit:
@@ -110,7 +110,7 @@ def getProblems(req, res, hashstr, *args, **kwargs):
 			#return res.json({"Valid":"Valid interview that has not been started"})
 			template = loader.get_template('myservices/welcomepage.html')
 			context = {
-				'hashstr' : hashstr,
+				'hashstr': hashstr,
 			}
 			res.html(template.render(context))
 			res.status(200)
@@ -142,8 +142,9 @@ def startInterview(req, res, hashstr, *args, **kwargs):
 def getTime(req, res, hashstr, *args, **kwargs):
 	query = Interview.objects.filter(hash_str=hashstr)
 	if(query):
-		if((timezone.now() - query[0].started_at).total_seconds() < settings.INTERVIEW_DURATION): #10800 #read from interview model
-			return res.json({"Time":query[0].started_at})
+		duration = query[0].duration * 60 * 60
+		if((timezone.now() - query[0].started_at).total_seconds() < duration): #10800 #read from interview model
+			return res.json({"Time":query[0].started_at, "Duration":duration})
 	return res.json({"Time": 0})
 
 @url('interview/hello')
@@ -158,6 +159,7 @@ def welcome(req, res, *args, **kwargs):
 def getInterview(req, res, hashstr, *args, **kwargs):
 	context = {
 		'hashstr' : hashstr,
+		'default_domain' : settings.DEFAULT_DOMAIN,
 	}
 	template = loader.get_template('myservices/interview.html')
 	res.html(template.render(context))
@@ -168,7 +170,6 @@ def getInterview(req, res, hashstr, *args, **kwargs):
 @service
 def formPost(req, res, *args, **kwargs):
 	form = EmailForm(req.POST)
-	context = {}
 	if form.is_valid():
 		email = form.cleaned_data['user_email']
 		query = Interview.objects.filter(candidate__user_name = email).exclude(status="Completed").order_by('created_at')

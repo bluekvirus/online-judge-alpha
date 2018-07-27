@@ -18,7 +18,7 @@
 	<div id="front-end-container" style="position:absolute; top: 0; bottom: 0; right: 0; left: 0;"></div>
 	<script>
 		$(document).ready(function(){
-			fetch('http://localhost:8000/interview/{{hashstr}}/problems')
+			fetch('http://{{default_domain}}:8000/interview/{{hashstr}}/problems')
 				.then((res) => {
 			        return res.text();
 				})
@@ -63,7 +63,7 @@
 		}
 
 		function startTimer(){
-			fetch('http://localhost:8000/interview/{{hashstr}}/time')
+			fetch('http://{{default_domain}}:8000/interview/{{hashstr}}/time')
 			.then((res) =>{
 				console.log(res)
 				return res.json();
@@ -74,9 +74,9 @@
 					return;
 				}
 				var startTime = new Date(data["Time"]);
-				initialMillis = Date.now();
-				console.log(initialMillis - startTime)
-				count = 3600000 - (Math.abs(initialMillis - startTime));
+				initialMillis = Date.now(); //purposely a global variable
+				var duration = data["Duration"]
+				count = (duration * 1000) - (Math.abs(initialMillis - startTime));
 				//no more time left
 				if (count < 0 ){
 					$('#timer').html('00:00:00');
@@ -115,12 +115,12 @@
 		}
 
 		function startInterview(){
- 			fetch('http://localhost:8000/interview/{{hashstr}}/start')
+ 			fetch('http://{{default_domain}}:8000/interview/{{hashstr}}/start')
 			.then((res) =>{
 				return res;
 			})
 			.then((data) => {
-				return fetch('http://localhost:8000/interview/{{hashstr}}/problems');
+				return fetch('http://{{default_domain}}:8000/interview/{{hashstr}}/problems');
 			})
 			.then((res) => {
 				return res.text();
@@ -140,7 +140,7 @@
 		function preloadResults(){
 			$('.result-pane').each(function(i, obj){
 				var obj = $(this);
-				var url = 'http://localhost:8000/interview/{{hashstr}}/results?pid=';
+				var url = 'http://{{default_domain}}:8000/interview/{{hashstr}}/results?pid=';
 				url += obj.attr('data-problem-id');
 				fetch(url).then((res) => {
 					return res.json();
@@ -230,7 +230,7 @@
 			}else{
 				mydata['language'] = "javascript";
 			}
-			fetch('http://localhost:8000/interview/{{hashstr}}/submit',{
+			fetch('http://{{default_domain}}:8000/interview/{{hashstr}}/submit',{
 				method: 'post',
 				headers: {
 					'Accept': 'application/json',
@@ -258,7 +258,7 @@
 		}
 
 		function startPoll($li, pid, sid){
-			var url = 'http://localhost:8000/interview/{{hashstr}}/poll?pid=';
+			var url = 'http://{{default_domain}}:8000/interview/{{hashstr}}/poll?pid=';
 			url += pid;
 			url += "&sid=";
 			url += sid;
