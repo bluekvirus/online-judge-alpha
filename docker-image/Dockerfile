@@ -20,6 +20,4 @@ ADD wait-on-kafka.sh .
 RUN chmod +x /app/entrypoint.sh
 RUN chmod +x /guarding.py 
 RUN chmod +x /wait-on-kafka.sh
-VOLUME /var/log
-VOLUME /app
 ENTRYPOINT ["/wait-on-kafka.sh"]
