@@ -4,7 +4,7 @@ Our online coding judge docker container, encapsulates a fully functioning backe
 
 ## Quick Start 
 By utilizing Docker containers, the startup procedure is greatly simplified. 
-Please follow these steps to begin using the container for your frontend coding platform needs. 
+Please follow these steps to begin using the container for your frontend coding platform needs. PLEASE NOTE: anywhere that the domain is localhost for the API, please switch in the default domain you are using.
 
  1. Download or clone this repo </br>
   `git clone https://github.com/ch3riee/online-judge-alpha.git .`
@@ -27,14 +27,15 @@ Please follow these steps to begin using the container for your frontend coding 
  4. Run command to migrate SQlite DB. </br>
  Switch into the directory that holds the manage.py file for the Django project. Then run
  `python3 manage.py migrate`
- 
- 5. Start up docker services.</br>
+ 5. Create a superuser for the admin site </br>
+ run the command `python3 manage.py createsuperuser`
+ 6. Start up docker services.</br>
   There is no need to run migrate for the DB because it is already set up with admin password and username. The rest of the DB   will be empty and ready for use.
    `docker-compose up`
- 6. Bootstrap Problems </br>
+ 7. Bootstrap Problems </br>
    Please bootstrap problems at this time, following the Add Problems section described below under Usage.
- 7. Test </br>
-    Once the services are up, go to `localhost:8000/interview/hello`  to make sure it is up and running.
+ 8. Test </br>
+    Once the services are up, go to `<domain>:8000/interview/hello`  to make sure it is up and running.
     
 ## Usage
 
