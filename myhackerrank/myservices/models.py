@@ -63,7 +63,7 @@ class Interview(models.Model):
 			self.created_at = timezone.now()
 		super(Interview, self).save()
 		message = settings.DEFAULT_DOMAIN + '/interview/' + self.hash_str
-		send_mail('Interview link', message , os.getenv('NOTIFICATION_EMAIL_SENDER'), ['ch3riee@gmail.com', 'bluekvirus@gmail.com'], fail_silently=False)
+		send_mail('Interview link', message , os.getenv('NOTIFICATION_EMAIL_SENDER'), ['test@gmail.com'], fail_silently=False)
 
 
 #each submission has a foreign key to the candidate it belongs to as well as the interview?? Many submissions for one interview and one candidate
